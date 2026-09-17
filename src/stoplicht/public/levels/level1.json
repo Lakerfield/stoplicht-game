@@ -1,0 +1,212 @@
+{
+ "formatVersion": 1,
+ "id": "level1",
+ "name": "Eén kruispunt",
+ "grid": {
+  "width": 11,
+  "height": 9
+ },
+ "roads": [
+  {
+   "id": "h",
+   "from": [
+    0,
+    4
+   ],
+   "to": [
+    10,
+    4
+   ]
+  },
+  {
+   "id": "v",
+   "from": [
+    5,
+    0
+   ],
+   "to": [
+    5,
+    8
+   ]
+  }
+ ],
+ "intersections": [
+  {
+   "id": "A",
+   "at": [
+    5,
+    4
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  }
+ ],
+ "spawnPoints": [
+  {
+   "id": "1",
+   "at": [
+    5,
+    0
+   ]
+  },
+  {
+   "id": "2",
+   "at": [
+    0,
+    4
+   ]
+  },
+  {
+   "id": "3",
+   "at": [
+    10,
+    4
+   ]
+  },
+  {
+   "id": "4",
+   "at": [
+    5,
+    8
+   ]
+  }
+ ],
+ "spawns": [
+  {
+   "time": 0,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 1.5,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 3,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 4,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 6,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 6.0,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 8,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 9,
+   "spawnPoint": "1",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 10.5,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 12,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 15,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 15.0,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 16,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 18,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 19.5,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  }
+ ],
+ "vehicleTypes": {
+  "car": {
+   "name": "Auto",
+   "kind": "car",
+   "length": 4.5,
+   "width": 2,
+   "maxSpeed": 14,
+   "acceleration": 2.5,
+   "deceleration": 4,
+   "minGap": 1.5
+  },
+  "truck": {
+   "name": "Vrachtwagen",
+   "kind": "truck",
+   "length": 10,
+   "width": 2.5,
+   "maxSpeed": 11,
+   "acceleration": 1.2,
+   "deceleration": 3,
+   "minGap": 2
+  }
+ },
+ "constants": {
+  "clearanceTime": 2,
+  "reactionTime": 0.3,
+  "greenRange": {
+   "min": 1,
+   "max": 60,
+   "step": 0.1
+  },
+  "offsetRange": {
+   "min": 0,
+   "max": 60,
+   "step": 0.1
+  }
+ },
+ "targetTime": 34,
+ "collisionMode": "mild",
+ "defaultLightSettings": {
+  "A": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  }
+ }
+}

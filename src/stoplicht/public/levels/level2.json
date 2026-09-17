@@ -1,0 +1,342 @@
+{
+ "formatVersion": 1,
+ "id": "level2",
+ "name": "Groene golf",
+ "grid": {
+  "width": 15,
+  "height": 9
+ },
+ "roads": [
+  {
+   "id": "h",
+   "from": [
+    0,
+    4
+   ],
+   "to": [
+    14,
+    4
+   ]
+  },
+  {
+   "id": "v1",
+   "from": [
+    4,
+    0
+   ],
+   "to": [
+    4,
+    8
+   ]
+  },
+  {
+   "id": "v2",
+   "from": [
+    10,
+    0
+   ],
+   "to": [
+    10,
+    8
+   ]
+  }
+ ],
+ "intersections": [
+  {
+   "id": "A",
+   "at": [
+    4,
+    4
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B",
+   "at": [
+    10,
+    4
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  }
+ ],
+ "spawnPoints": [
+  {
+   "id": "1",
+   "at": [
+    4,
+    0
+   ]
+  },
+  {
+   "id": "2",
+   "at": [
+    10,
+    0
+   ]
+  },
+  {
+   "id": "3",
+   "at": [
+    0,
+    4
+   ]
+  },
+  {
+   "id": "4",
+   "at": [
+    14,
+    4
+   ]
+  },
+  {
+   "id": "5",
+   "at": [
+    4,
+    8
+   ]
+  },
+  {
+   "id": "6",
+   "at": [
+    10,
+    8
+   ]
+  }
+ ],
+ "spawns": [
+  {
+   "time": 0,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 2,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 3,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 3,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 5,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 6,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 6,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 8,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 9,
+   "spawnPoint": "3",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 9,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 12,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 12,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 14,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 15,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 16,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 16,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 18,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 18,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 21,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 21,
+   "spawnPoint": "3",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 23,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 23,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 24,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 26,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 27,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 28,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 30,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 30,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 30,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 32,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  }
+ ],
+ "vehicleTypes": {
+  "car": {
+   "name": "Auto",
+   "kind": "car",
+   "length": 4.5,
+   "width": 2,
+   "maxSpeed": 14,
+   "acceleration": 2.5,
+   "deceleration": 4,
+   "minGap": 1.5
+  },
+  "truck": {
+   "name": "Vrachtwagen",
+   "kind": "truck",
+   "length": 10,
+   "width": 2.5,
+   "maxSpeed": 11,
+   "acceleration": 1.2,
+   "deceleration": 3,
+   "minGap": 2
+  }
+ },
+ "constants": {
+  "clearanceTime": 2,
+  "reactionTime": 0.3,
+  "greenRange": {
+   "min": 1,
+   "max": 60,
+   "step": 0.1
+  },
+  "offsetRange": {
+   "min": 0,
+   "max": 60,
+   "step": 0.1
+  }
+ },
+ "targetTime": 52,
+ "collisionMode": "mild",
+ "defaultLightSettings": {
+  "A": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "B": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  }
+ }
+}

@@ -1,0 +1,43 @@
+<import from="../resources/time-format"></import>
+
+<div class="menu-root">
+  <header class="menu-header">
+    <h1 class="text-4xl font-bold tracking-tight">🚦 Stoplicht</h1>
+    <p class="opacity-70 mt-1">${'menu.tagline' | t}</p>
+  </header>
+
+  <p if.bind="error" class="text-red-700">${error}</p>
+
+  <ol class="level-list">
+    <li repeat.for="l of levels" class="level-item">
+      <button type="button" class="level-row" disabled.bind="!l.unlocked" click.trigger="play(l)">
+        <span class="level-index">${$index + 1}</span>
+        <span class="level-main">
+          <span class="level-name">${l.name}
+            <span class="badge" if.bind="l.collisionMode === 'strict'">${'menu.strict' | t}</span>
+          </span>
+          <span class="level-meta">
+            <span>${'hud.target' | t} <span class="font-mono tabular-nums">${l.targetTime | time}</span></span>
+            <span if.bind="l.best !== null">· ${'menu.best' | t} <span class="font-mono tabular-nums">${l.best | time}</span></span>
+          </span>
+        </span>
+        <span class="level-status" class.bind="l.achieved ? 'text-green-700' : ''">${l.unlocked ? (l.achieved ? '✓' : '›') : '🔒'}</span>
+      </button>
+      <button if.bind="editorUnlocked" type="button" class="btn btn-icon level-clone" click.trigger="cloneToEditor(l, $event)" title="${'menu.cloneToEditor' | t}" aria-label="${'menu.cloneToEditor' | t}">⧉</button>
+    </li>
+  </ol>
+
+  <footer class="menu-footer">
+    <button type="button" class="btn" click.trigger="toggleLocale()" aria-label="${'menu.language' | t}">${locale === 'nl' ? 'EN' : 'NL'}</button>
+    <button type="button" class="btn" click.trigger="audio.toggleMuted()" aria-label="${'hud.mute' | t}">${audio.muted ? '🔇' : '🔊'}</button>
+    <template if.bind="editorUnlocked">
+      <button type="button" class="btn" click.trigger="openEditor()">🛠 ${'menu.editor' | t}</button>
+      <span class="text-xs opacity-60">${'menu.devUnlocked' | t}</span>
+      <button type="button" class="link" click.trigger="hideEditor()">${'menu.hideEditor' | t}</button>
+    </template>
+    <span class="grow"></span>
+    <button type="button" class="version" click.trigger="onVersionClick($event)" title="v${version}">v${version}</button>
+  </footer>
+
+  <div class="toast" if.bind="toast">${toast}</div>
+</div>

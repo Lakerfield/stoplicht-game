@@ -1,0 +1,246 @@
+<import from="../resources/num"></import>
+
+<div class="editor-root">
+  <header class="editor-header">
+    <button type="button" class="btn" click.trigger="backToMenu()">☰ ${'editor.back' | t}</button>
+    <h1 class="text-xl font-semibold">🛠 ${'editor.title' | t}</h1>
+    <span class="grow"></span>
+    <button type="button" class="btn btn-primary" click.trigger="test()" disabled.bind="errors.length > 0 || level.spawns.length === 0">▶ ${'editor.test' | t}</button>
+  </header>
+
+  <div class="editor-body">
+    <section class="editor-canvas">
+      <div class="toolbar">
+        <button repeat.for="tl of tools" type="button" class="btn" active.class="tool === tl.id" click.trigger="tool = tl.id" title="${tl.label | t}">${tl.icon} <span class="hidden sm:inline">${tl.label | t}</span></button>
+      </div>
+      <p class="text-xs opacity-70 mb-2">${'editor.hint.' + tool | t}</p>
+
+      <svg class="editor-svg" ref="svg" style="aspect-ratio: ${level.grid.width} / ${level.grid.height}; width: min(100%, calc(70dvh * ${level.grid.width} / ${level.grid.height}))"
+        pointerdown.trigger="onPointerDown($event)" pointermove.trigger="onPointerMove($event)"
+        pointerup.trigger="onPointerUp()" pointercancel.trigger="onPointerUp()">
+        <rect x="0" y="0" width.attr="level.grid.width * tile" height.attr="level.grid.height * tile" fill="#e6efdc"></rect>
+        <line repeat.for="g of gridLines" x1.attr="g.x1" y1.attr="g.y1" x2.attr="g.x2" y2.attr="g.y2" stroke="#d3ddc7" stroke-width="1"></line>
+        <rect repeat.for="tl of tiles" x.attr="tl.x * tile" y.attr="tl.y * tile" width.attr="tile" height.attr="tile" fill.attr="tl.junction ? '#7f858e' : '#8d939c'"></rect>
+        <g repeat.for="a of arrows" transform.attr="`translate(${a.x} ${a.y}) rotate(${a.angle})`">
+          <path d="M -8 -6 L 8 0 L -8 6 Z" fill="#f5f7fa" opacity="0.9"></path>
+        </g>
+        <g repeat.for="p of spawnPointViews" class="spawn-marker" pointerdown.trigger="openSpawnPoint(p.id, $event)">
+          <circle cx.attr="p.x" cy.attr="p.y" r="19" fill="#fff" opacity="0.001"></circle>
+          <g transform.attr="`translate(${p.x} ${p.y}) rotate(${p.angle})`"><path d="M -12 -7 L 4 0 L -12 7 Z" fill="#2563eb"></path></g>
+          <text x.attr="p.x" y.attr="p.y - 12" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">${p.id}</text>
+          <text x.attr="p.x" y.attr="p.y + 18" text-anchor="middle" font-size="9" fill="#2563eb">${spawnCount(p.id)}</text>
+        </g>
+        <g repeat.for="k of intersectionViews">
+          <rect x.attr="k.x - tile / 2 + 2" y.attr="k.y - tile / 2 + 2" width.attr="tile - 4" height.attr="tile - 4" fill="none" stroke.attr="k.id === selectedIntersectionId ? '#2563eb' : '#f5f7fa'" stroke-width.attr="k.id === selectedIntersectionId ? 3 : 1.5"></rect>
+          <text x.attr="k.x" y.attr="k.y + 4" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${k.id}</text>
+        </g>
+        <rect if.bind="dragPreview" x.attr="dragPreview.x" y.attr="dragPreview.y" width.attr="dragPreview.w" height.attr="dragPreview.h" fill="#2563eb" opacity="0.35"></rect>
+      </svg>
+
+      <div class="mt-3" if.bind="level.spawnPoints.length">
+        <div class="text-xs uppercase tracking-wide opacity-60 mb-1">${'editor.spawns' | t} · ${'editor.total' | t: { count: level.spawns.length }}</div>
+        <svg class="timeline" ref="timelineSvg" style="aspect-ratio: 1000 / ${timelineHeight}"
+          pointermove.trigger="onTimelineMove($event)" pointerup.trigger="onTimelineUp()" pointercancel.trigger="onTimelineUp()">
+          <g repeat.for="tick of timelineTicks">
+            <line x1.attr="tick.x" y1="4" x2.attr="tick.x" y2.attr="timelineHeight - 12" stroke="#d3ddc7"></line>
+            <text x.attr="tick.x" y.attr="timelineHeight - 2" font-size="9" text-anchor="middle" fill="#6b7280">${tick.label}s</text>
+          </g>
+          <g repeat.for="row of timelineRows">
+            <rect class="timeline-row" x="36" y.attr="row.y - rowHeight / 2" width="960" height.attr="rowHeight" fill="#fff" opacity="0.001" pointerdown.trigger="onTimelineRowDown(row, $event)"></rect>
+            <text class="timeline-label" x="2" y.attr="row.y + 4" font-size="11" font-weight="700" fill="#2563eb" pointerdown.trigger="openSpawnPoint(row.id, $event)">${row.id}</text>
+            <line x1="40" y1.attr="row.y" x2="980" y2.attr="row.y" stroke="#c9d2bd" pointer-events="none"></line>
+            <rect repeat.for="it of row.items" class="timeline-dot" x.attr="it.x - (it.truck ? 6 : 4)" y.attr="row.y - (it.truck ? 6 : 4)" width.attr="it.truck ? 12 : 8" height.attr="it.truck ? 12 : 8" rx="1.5"
+              fill.attr="it.truck ? '#475569' : '#2563eb'" pointerdown.trigger="onDotDown(it.spawn, $event)"></rect>
+          </g>
+        </svg>
+        <p class="text-xs opacity-70 mt-1">${'editor.timelineHint' | t}</p>
+      </div>
+    </section>
+
+    <aside class="editor-sidebar">
+      <div class="error-box" if.bind="errors.length">
+        <div class="font-semibold mb-1">${'editor.errors' | t}</div>
+        <ul class="list-disc pl-4 text-sm"><li repeat.for="e of errors">${e}</li></ul>
+        <button type="button" class="btn mt-2" if.bind="invalidSpawnCount" click.trigger="pruneInvalidSpawns()">${'editor.prune' | t: { count: invalidSpawnCount }}</button>
+      </div>
+
+      <details open>
+        <summary>${'editor.level' | t}</summary>
+        <div class="form-grid">
+          <label>${'editor.id' | t}<input type="text" value.bind="level.id" change.trigger="changed()"></label>
+          <label>${'editor.name' | t}<input type="text" value.bind="level.name" change.trigger="changed()"></label>
+          <label>${'editor.grid' | t}
+            <span class="flex gap-1">
+              <input type="number" min="3" max="40" value.bind="level.grid.width | num" change.trigger="resizeGrid()">
+              <input type="number" min="3" max="40" value.bind="level.grid.height | num" change.trigger="resizeGrid()">
+            </span>
+          </label>
+          <label>${'editor.target' | t}<input type="number" min="1" step="0.1" value.bind="level.targetTime | num" change.trigger="changed()"></label>
+          <label>${'editor.collision' | t}
+            <select value.bind="level.collisionMode" change.trigger="changed()">
+              <option value="mild">${'editor.mild' | t}</option>
+              <option value="strict">${'editor.strict' | t}</option>
+            </select>
+          </label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>${'editor.intersections' | t} (${level.intersections.length})</summary>
+        <p class="text-sm opacity-70" if.bind="!level.intersections.length">${'editor.noIntersections' | t}</p>
+        <div repeat.for="k of level.intersections" class="row-card" active.class="k.id === selectedIntersectionId" click.trigger="selectedIntersectionId = k.id">
+          <div class="font-semibold">${k.id} <span class="opacity-60 font-normal">(${k.at[0]}, ${k.at[1]})</span></div>
+          <div class="form-grid three">
+            <label>${'editor.greenA' | t}<input type="number" min="1" step="0.1" value.bind="level.defaultLightSettings[k.id].green.A | num" change.trigger="changed()"></label>
+            <label>${'editor.greenB' | t}<input type="number" min="1" step="0.1" value.bind="level.defaultLightSettings[k.id].green.B | num" change.trigger="changed()"></label>
+            <label>${'editor.offset' | t}<input type="number" min="0" step="0.1" value.bind="level.defaultLightSettings[k.id].offset | num" change.trigger="changed()"></label>
+          </div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>${'editor.spawns' | t} (${level.spawns.length})</summary>
+        <p class="text-sm opacity-70" if.bind="!level.spawnPoints.length">${'editor.noSpawnPoints' | t}</p>
+        <template if.bind="level.spawnPoints.length">
+          <div class="text-xs uppercase tracking-wide opacity-60 mt-1">${'editor.perPoint' | t}</div>
+          <div class="flex flex-wrap gap-2 mt-1">
+            <button repeat.for="p of level.spawnPoints" type="button" class="btn" click.trigger="openSpawnPoint(p.id)">${p.id} <span class="opacity-60 font-normal">(${spawnCount(p.id)})</span></button>
+          </div>
+          <div class="flex gap-2 flex-wrap mt-3">
+            <button type="button" class="btn" click.trigger="clearSpawns()" if.bind="level.spawns.length">${'editor.clear' | t}</button>
+          </div>
+        </template>
+      </details>
+
+      <details>
+        <summary>${'editor.advanced' | t}</summary>
+        <div class="text-xs uppercase tracking-wide opacity-60 mt-1">${'editor.vehicleTypes' | t}</div>
+        <div repeat.for="id of vehicleTypeIds" class="row-card">
+          <div class="font-semibold">${id}</div>
+          <div class="form-grid three">
+            <label>${'editor.length' | t}<input type="number" step="0.5" value.bind="level.vehicleTypes[id].length | num" change.trigger="changed()"></label>
+            <label>${'editor.width' | t}<input type="number" step="0.1" value.bind="level.vehicleTypes[id].width | num" change.trigger="changed()"></label>
+            <label>${'editor.maxSpeed' | t}<input type="number" step="0.5" value.bind="level.vehicleTypes[id].maxSpeed | num" change.trigger="changed()"></label>
+            <label>${'editor.acceleration' | t}<input type="number" step="0.1" value.bind="level.vehicleTypes[id].acceleration | num" change.trigger="changed()"></label>
+            <label>${'editor.deceleration' | t}<input type="number" step="0.1" value.bind="level.vehicleTypes[id].deceleration | num" change.trigger="changed()"></label>
+            <label>${'editor.minGap' | t}<input type="number" step="0.1" value.bind="level.vehicleTypes[id].minGap | num" change.trigger="changed()"></label>
+          </div>
+        </div>
+        <div class="text-xs uppercase tracking-wide opacity-60 mt-3">${'editor.constants' | t}</div>
+        <div class="form-grid">
+          <label>${'editor.clearance' | t}<input type="number" min="0" step="0.5" value.bind="level.constants.clearanceTime | num" change.trigger="changed()"></label>
+          <label>${'editor.reaction' | t}<input type="number" min="0" step="0.1" value.bind="level.constants.reactionTime | num" change.trigger="changed()"></label>
+          <label>${'editor.greenRange' | t}
+            <span class="flex gap-1">
+              <input type="number" value.bind="level.constants.greenRange.min | num" change.trigger="changed()">
+              <input type="number" value.bind="level.constants.greenRange.max | num" change.trigger="changed()">
+              <input type="number" step="0.1" value.bind="level.constants.greenRange.step | num" change.trigger="changed()">
+            </span>
+          </label>
+          <label>${'editor.offsetRange' | t}
+            <span class="flex gap-1">
+              <input type="number" value.bind="level.constants.offsetRange.min | num" change.trigger="changed()">
+              <input type="number" value.bind="level.constants.offsetRange.max | num" change.trigger="changed()">
+              <input type="number" step="0.1" value.bind="level.constants.offsetRange.step | num" change.trigger="changed()">
+            </span>
+          </label>
+          <div>${'editor.locked' | t}:
+            <label class="inline-flex items-center gap-1 ml-2" repeat.for="p of lightParams"><input type="checkbox" checked.bind="isLocked(p)" change.trigger="toggleLocked(p)"> ${p}</label>
+          </div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>${'editor.actions' | t}</summary>
+        <div class="flex flex-col gap-2 mt-1">
+          <button type="button" class="btn btn-primary" click.trigger="test()" disabled.bind="errors.length > 0 || level.spawns.length === 0">▶ ${'editor.test' | t}</button>
+          <button type="button" class="btn" click.trigger="exportJson()">⬇ ${'editor.export' | t}</button>
+          <label class="btn text-center cursor-pointer">⬆ ${'editor.import' | t}<input type="file" accept="application/json,.json" class="hidden" change.trigger="importJson($event)"></label>
+          <div class="flex gap-1" if.bind="standardLevels.length">
+            <select class="grow" value.bind="standardLevelId"><option value="">${'editor.cloneStandard' | t}…</option><option repeat.for="l of standardLevels" value.bind="l.id">${l.name}</option></select>
+            <button type="button" class="btn" click.trigger="cloneStandard()" disabled.bind="!standardLevelId">${'editor.clone' | t}</button>
+          </div>
+          <button type="button" class="btn btn-danger" click.trigger="askNewLevel()">✦ ${'editor.newLevel' | t}</button>
+          <p class="text-red-700 text-sm" if.bind="importError">${importError}</p>
+        </div>
+      </details>
+    </aside>
+  </div>
+
+  <!-- popup: vehicles of one spawn point -->
+  <div class="overlay" if.bind="spawnPointDialog && !editingSpawn" click.trigger="closeDialogs()">
+    <div class="dialog dialog-wide" click.trigger="$event.stopPropagation()">
+      <header class="flex items-center justify-between gap-2 mb-3">
+        <h2 class="text-lg font-semibold">${'editor.spawnPoint' | t} ${spawnPointDialog} <span class="opacity-60 font-normal text-sm" if.bind="dialogSpawnPoint">(${dialogSpawnPoint.at[0]}, ${dialogSpawnPoint.at[1]})</span></h2>
+        <button type="button" class="btn btn-icon" click.trigger="closeDialogs()" aria-label="${'editor.close' | t}">✕</button>
+      </header>
+      <div class="text-xs uppercase tracking-wide opacity-60">${'editor.generator' | t}</div>
+      <div class="form-grid four">
+        <label>${'editor.type' | t}
+          <select value.bind="generator.vehicleType"><option repeat.for="id of vehicleTypeIds" value.bind="id">${id}</option></select>
+        </label>
+        <label>${'editor.start' | t}<input type="number" min="0" step="0.1" value.bind="generator.start | num"></label>
+        <label>${'editor.interval' | t}<input type="number" min="0.1" step="0.1" value.bind="generator.interval | num"></label>
+        <label>${'editor.count' | t}<input type="number" min="1" max="200" value.bind="generator.count | num"></label>
+      </div>
+      <div class="flex gap-2 flex-wrap mt-2">
+        <button type="button" class="btn btn-primary" click.trigger="addGenerated()">+ ${'editor.addSeries' | t}</button>
+        <button type="button" class="btn" click.trigger="addSingleSpawn()">+ ${'editor.addOne' | t}</button>
+        <button type="button" class="btn" click.trigger="clearSpawnsFor(spawnPointDialog)" if.bind="dialogSpawns.length">${'editor.clearPoint' | t}</button>
+      </div>
+      <table class="spawn-table" if.bind="dialogSpawns.length">
+        <thead><tr><th>#</th><th>${'editor.time' | t}</th><th>${'editor.type' | t}</th><th></th></tr></thead>
+        <tbody>
+          <tr repeat.for="s of dialogSpawns">
+            <td class="opacity-60">${$index + 1}</td>
+            <td><input type="number" min="0" step="0.1" value.bind="s.time | num" change.trigger="sortSpawns()"></td>
+            <td><select value.bind="s.vehicleType" change.trigger="changed()"><option repeat.for="id of vehicleTypeIds" value.bind="id">${id}</option></select></td>
+            <td><button type="button" class="btn btn-icon" click.trigger="removeSpawnObject(s)" aria-label="${'editor.delete' | t}">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="text-sm opacity-70 mt-3" if.bind="!dialogSpawns.length">${'editor.noSpawnsHere' | t}</p>
+    </div>
+  </div>
+
+  <!-- popup: new level (replaces the current one) -->
+  <div class="overlay" if.bind="newLevelOpen" click.trigger="cancelNewLevel()">
+    <div class="dialog" click.trigger="$event.stopPropagation()">
+      <h2 class="text-lg font-semibold mb-2">${'editor.newLevel' | t}</h2>
+      <p class="text-sm mb-3">${'editor.newLevelBody' | t: { roads: level.roads.length, spawns: level.spawns.length }}</p>
+      <div class="form-grid" style="grid-template-columns: 1fr 1fr">
+        <label>${'editor.gridWidth' | t}<input id="new-grid-width" type="number" min="3" max="40" value.bind="newGrid.width | num"></label>
+        <label>${'editor.gridHeight' | t}<input id="new-grid-height" type="number" min="3" max="40" value.bind="newGrid.height | num"></label>
+      </div>
+      <p class="text-xs opacity-70 mt-1 mb-4">${'editor.gridHint' | t}</p>
+      <div class="flex flex-col gap-2">
+        <button type="button" class="btn btn-danger" click.trigger="createNewLevel()">✦ ${'editor.newLevelConfirm' | t}</button>
+        <button type="button" class="btn" click.trigger="exportJson()">⬇ ${'editor.exportFirst' | t}</button>
+        <button type="button" class="btn" click.trigger="cancelNewLevel()">${'editor.cancel' | t}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup: one spawn -->
+  <div class="overlay" if.bind="editingSpawn" click.trigger="closeDialogs()">
+    <div class="dialog" click.trigger="$event.stopPropagation()">
+      <header class="flex items-center justify-between gap-2 mb-3">
+        <h2 class="text-lg font-semibold">${'editor.editSpawn' | t}</h2>
+        <button type="button" class="btn btn-icon" click.trigger="closeDialogs()" aria-label="${'editor.close' | t}">✕</button>
+      </header>
+      <div class="form-grid">
+        <label>${'editor.time' | t} (s)<input type="number" min="0" step="0.1" value.bind="editingSpawn.time | num" change.trigger="sortSpawns()"></label>
+        <label>${'editor.point' | t}
+          <select value.bind="editingSpawn.spawnPoint" change.trigger="rebuild()"><option repeat.for="p of level.spawnPoints" value.bind="p.id">${p.id}</option></select>
+        </label>
+        <label>${'editor.type' | t}
+          <select value.bind="editingSpawn.vehicleType" change.trigger="changed()"><option repeat.for="id of vehicleTypeIds" value.bind="id">${id}</option></select>
+        </label>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button type="button" class="btn grow" click.trigger="closeDialogs()">${'editor.close' | t}</button>
+        <button type="button" class="btn btn-danger grow" click.trigger="deleteEditingSpawn()">🗑 ${'editor.delete' | t}</button>
+      </div>
+    </div>
+  </div>
+</div>

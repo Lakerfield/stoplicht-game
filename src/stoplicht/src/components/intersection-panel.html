@@ -1,0 +1,40 @@
+<import from="./param-slider"></import>
+
+<aside class="panel" if.bind="intersection && settings && session.selectedSignal">
+  <header class="flex items-center justify-between gap-2 mb-3">
+    <h2 class="text-lg font-semibold">${'panel.title' | t: { id: displayName }}</h2>
+    <button type="button" class="btn btn-icon" click.trigger="close()" aria-label="${'panel.close' | t}">✕</button>
+  </header>
+
+  <section class="mb-4">
+    <div class="text-xs uppercase tracking-wide opacity-60 mb-1">${'panel.phase' | t}</div>
+    <div class="flex gap-3">
+      <div repeat.for="g of intersection.lightGroups" class="flex items-center gap-2 text-sm">
+        <span class="lamp" data-color.bind="session.selectedSignal.colors[g.id]"></span>
+        <span>${'panel.group.' + g.id | t}</span>
+        <span class="font-mono tabular-nums opacity-70" if.bind="session.selectedSignal.colors[g.id] !== 'red'">${remaining()}s</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <param-slider repeat.for="g of intersection.lightGroups"
+      label.bind="groupLabel(g.id)"
+      min.bind="constants.greenRange.min" max.bind="constants.greenRange.max" step.bind="constants.greenRange.step"
+      value.two-way="settings.green[g.id]"
+      disabled.bind="!session.canEditSettings || isLocked('green')"
+      input.trigger="session.settingsChanged()"></param-slider>
+
+    <param-slider if.bind="!isLocked('offset')"
+      label.bind="'panel.offset' | t"
+      min.bind="constants.offsetRange.min" max.bind="constants.offsetRange.max" step.bind="constants.offsetRange.step"
+      value.two-way="settings.offset"
+      disabled.bind="!session.canEditSettings"
+      input.trigger="session.settingsChanged()"></param-slider>
+  </section>
+
+  <p class="text-xs opacity-70 mt-3">Cyclus ${cycleSeconds.toFixed(1)} s</p>
+  <p class="text-xs mt-2 text-amber-700" if.bind="session.runState === 'running'">${'panel.locked' | t}</p>
+  <p class="text-xs mt-2 text-amber-700" if.bind="session.isOver">${'panel.over' | t}</p>
+  <p class="text-xs mt-2 text-blue-700 font-medium" if.bind="session.needsRestart">${'panel.changed' | t}</p>
+</aside>

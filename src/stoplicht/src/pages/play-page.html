@@ -1,0 +1,81 @@
+<import from="../components/game-canvas"></import>
+<import from="../components/intersection-panel"></import>
+<import from="../resources/time-format"></import>
+
+<div class="play-root">
+  <game-canvas></game-canvas>
+
+  <div if.bind="!session.level && !error" class="absolute inset-0 grid place-items-center text-lg">${'app.loading' | t}</div>
+  <div if.bind="error" class="absolute inset-0 grid place-items-center text-red-700 p-4 text-center">${error}</div>
+
+  <template if.bind="session.level">
+    <!-- HUD top -->
+    <div class="hud-top">
+      <div class="hud-card flex flex-col gap-1 p-1!">
+        <button type="button" class="btn btn-icon" click.trigger="back()" aria-label="${(fromEditor ? 'hud.backToEditor' : 'hud.menu') | t}">${fromEditor ? '🛠' : '☰'}</button>
+        <button type="button" class="btn btn-icon" click.trigger="session.audio.toggleMuted()" aria-label="${'hud.mute' | t}">${session.audio.muted ? '🔇' : '🔊'}</button>
+      </div>
+      <div class="hud-card">
+        <div class="text-xs uppercase tracking-wide opacity-60">${'hud.time' | t}</div>
+        <div class="text-3xl font-mono tabular-nums leading-none">${session.time | time}</div>
+        <div class="text-xs opacity-70 mt-1">${'hud.target' | t} <span class="font-mono tabular-nums">${session.level.targetTime | time}</span></div>
+      </div>
+      <div class="hud-card text-sm">
+        <div class="font-semibold">🚗 ${session.counts.onMap} <span class="opacity-60 font-normal">${'hud.onMap' | t}</span></div>
+        <div>${session.counts.queued} <span class="opacity-60">${'hud.queued' | t}</span></div>
+        <div>${session.counts.pending} <span class="opacity-60">${'hud.pending' | t}</span></div>
+      </div>
+    </div>
+
+    <!-- controls bottom -->
+    <div class="hud-bottom">
+      <div class="hud-card flex items-center gap-2 flex-wrap justify-center">
+        <button type="button" class="btn" click.trigger="session.reset()">↺ ${'hud.reset' | t}</button>
+        <button type="button" class="btn btn-primary min-w-28" click.trigger="session.togglePlay()" disabled.bind="session.isOver">
+          ${session.isPlaying ? '⏸' : (session.needsRestart ? '↻' : '▶')} ${playLabel | t}
+        </button>
+        <div class="flex gap-1" role="group" aria-label="${'hud.speed' | t}">
+          <button repeat.for="s of speeds" type="button" class="btn" active.class="session.speed === s" click.trigger="session.setSpeed(s)">${s}×</button>
+        </div>
+      </div>
+    </div>
+
+    <intersection-panel></intersection-panel>
+
+    <!-- result -->
+    <div class="overlay" if.bind="session.runState === 'finished' && session.result">
+      <div class="dialog">
+        <h2 class="text-2xl font-bold mb-1">${'result.title' | t}</h2>
+        <p class="text-lg font-semibold mb-4" class.bind="session.result.achieved ? 'text-green-700' : 'text-red-700'">
+          ${(session.result.achieved ? 'result.achieved' : 'result.missed') | t}
+        </p>
+        <dl class="grid grid-cols-2 gap-y-1 text-sm mb-4">
+          <dt class="opacity-70">${'result.time' | t}</dt><dd class="font-mono tabular-nums text-right">${session.result.time | time}</dd>
+          <dt class="opacity-70">${'result.target' | t}</dt><dd class="font-mono tabular-nums text-right">${session.result.targetTime | time}</dd>
+          <template if.bind="session.result.previousBest !== null">
+            <dt class="opacity-70">${'result.best' | t}</dt><dd class="font-mono tabular-nums text-right">${session.result.previousBest | time}</dd>
+            <dt class="opacity-70">${'result.diff' | t}</dt><dd class="font-mono tabular-nums text-right">${diffToBest > 0 ? '+' : ''}${diffToBest | time}</dd>
+          </template>
+        </dl>
+        <p class="text-amber-600 font-semibold mb-4" if.bind="session.result.isNewBest && session.result.previousBest !== null">★ ${'result.newBest' | t}</p>
+        <div class="flex flex-col gap-2">
+          <button type="button" class="btn btn-primary w-full" if.bind="session.result.achieved && nextLevelId" click.trigger="next()">${'result.next' | t} →</button>
+          <button type="button" class="btn w-full" active.class="!(session.result.achieved && nextLevelId)" click.trigger="session.reset()">↺ ${'result.again' | t}</button>
+          <button type="button" class="btn w-full" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- crash -->
+    <div class="overlay" if.bind="session.runState === 'crashed' && session.collision && session.crashDialogVisible">
+      <div class="dialog border-red-300">
+        <h2 class="text-2xl font-bold text-red-700 mb-2">💥 ${'crash.title' | t}</h2>
+        <p class="mb-4">${'crash.body' | t: { id: crashIntersectionName }}</p>
+        <div class="flex flex-col gap-2">
+          <button type="button" class="btn btn-primary w-full" click.trigger="session.reset()">↺ ${'crash.reset' | t}</button>
+          <button type="button" class="btn w-full" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>

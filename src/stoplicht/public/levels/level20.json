@@ -1,0 +1,1127 @@
+{
+ "formatVersion": 1,
+ "id": "level20",
+ "name": "Grote finale",
+ "grid": {
+  "width": 23,
+  "height": 17
+ },
+ "roads": [
+  {
+   "id": "h1",
+   "from": [
+    0,
+    3
+   ],
+   "to": [
+    22,
+    3
+   ]
+  },
+  {
+   "id": "h2",
+   "from": [
+    0,
+    8
+   ],
+   "to": [
+    22,
+    8
+   ]
+  },
+  {
+   "id": "h3",
+   "from": [
+    0,
+    13
+   ],
+   "to": [
+    22,
+    13
+   ]
+  },
+  {
+   "id": "v1",
+   "from": [
+    5,
+    0
+   ],
+   "to": [
+    5,
+    16
+   ]
+  },
+  {
+   "id": "v2",
+   "from": [
+    11,
+    0
+   ],
+   "to": [
+    11,
+    16
+   ]
+  },
+  {
+   "id": "v3",
+   "from": [
+    17,
+    0
+   ],
+   "to": [
+    17,
+    16
+   ]
+  }
+ ],
+ "intersections": [
+  {
+   "id": "A",
+   "at": [
+    5,
+    3
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B",
+   "at": [
+    11,
+    3
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C",
+   "at": [
+    17,
+    3
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "D",
+   "at": [
+    5,
+    8
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "E",
+   "at": [
+    11,
+    8
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F",
+   "at": [
+    17,
+    8
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "G",
+   "at": [
+    5,
+    13
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "H",
+   "at": [
+    11,
+    13
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "I",
+   "at": [
+    17,
+    13
+   ],
+   "lightGroups": [
+    {
+     "id": "A",
+     "approaches": [
+      "N",
+      "S"
+     ]
+    },
+    {
+     "id": "B",
+     "approaches": [
+      "E",
+      "W"
+     ]
+    }
+   ]
+  }
+ ],
+ "spawnPoints": [
+  {
+   "id": "1",
+   "at": [
+    5,
+    0
+   ]
+  },
+  {
+   "id": "2",
+   "at": [
+    11,
+    0
+   ]
+  },
+  {
+   "id": "3",
+   "at": [
+    17,
+    0
+   ]
+  },
+  {
+   "id": "4",
+   "at": [
+    0,
+    3
+   ]
+  },
+  {
+   "id": "5",
+   "at": [
+    22,
+    3
+   ]
+  },
+  {
+   "id": "6",
+   "at": [
+    0,
+    8
+   ]
+  },
+  {
+   "id": "7",
+   "at": [
+    22,
+    8
+   ]
+  },
+  {
+   "id": "8",
+   "at": [
+    0,
+    13
+   ]
+  },
+  {
+   "id": "9",
+   "at": [
+    22,
+    13
+   ]
+  },
+  {
+   "id": "10",
+   "at": [
+    5,
+    16
+   ]
+  },
+  {
+   "id": "11",
+   "at": [
+    11,
+    16
+   ]
+  },
+  {
+   "id": "12",
+   "at": [
+    17,
+    16
+   ]
+  }
+ ],
+ "spawns": [
+  {
+   "time": 0,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 0.5,
+   "spawnPoint": "7",
+   "vehicleType": "car"
+  },
+  {
+   "time": 1,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 1,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 1.5,
+   "spawnPoint": "8",
+   "vehicleType": "car"
+  },
+  {
+   "time": 2,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 2,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 2.5,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 3,
+   "spawnPoint": "9",
+   "vehicleType": "car"
+  },
+  {
+   "time": 3.5,
+   "spawnPoint": "10",
+   "vehicleType": "car"
+  },
+  {
+   "time": 4.5,
+   "spawnPoint": "11",
+   "vehicleType": "car"
+  },
+  {
+   "time": 5.5,
+   "spawnPoint": "12",
+   "vehicleType": "car"
+  },
+  {
+   "time": 5.5,
+   "spawnPoint": "7",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 6,
+   "spawnPoint": "4",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 7,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 7,
+   "spawnPoint": "6",
+   "vehicleType": "van"
+  },
+  {
+   "time": 7.5,
+   "spawnPoint": "8",
+   "vehicleType": "car"
+  },
+  {
+   "time": 8,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 9,
+   "spawnPoint": "3",
+   "vehicleType": "van"
+  },
+  {
+   "time": 9,
+   "spawnPoint": "9",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 9.5,
+   "spawnPoint": "1",
+   "vehicleType": "van"
+  },
+  {
+   "time": 10.5,
+   "spawnPoint": "10",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 10.5,
+   "spawnPoint": "7",
+   "vehicleType": "car"
+  },
+  {
+   "time": 11.5,
+   "spawnPoint": "11",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 12,
+   "spawnPoint": "4",
+   "vehicleType": "van"
+  },
+  {
+   "time": 12,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 12.5,
+   "spawnPoint": "12",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 13,
+   "spawnPoint": "5",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 13.5,
+   "spawnPoint": "8",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 15,
+   "spawnPoint": "2",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 15,
+   "spawnPoint": "9",
+   "vehicleType": "car"
+  },
+  {
+   "time": 15.5,
+   "spawnPoint": "7",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 16,
+   "spawnPoint": "3",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 16.5,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 17,
+   "spawnPoint": "6",
+   "vehicleType": "tractor"
+  },
+  {
+   "time": 17.5,
+   "spawnPoint": "10",
+   "vehicleType": "tractor"
+  },
+  {
+   "time": 18,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 18.5,
+   "spawnPoint": "11",
+   "vehicleType": "car"
+  },
+  {
+   "time": 19,
+   "spawnPoint": "5",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 19.5,
+   "spawnPoint": "12",
+   "vehicleType": "car"
+  },
+  {
+   "time": 19.5,
+   "spawnPoint": "8",
+   "vehicleType": "van"
+  },
+  {
+   "time": 20.5,
+   "spawnPoint": "7",
+   "vehicleType": "car"
+  },
+  {
+   "time": 21,
+   "spawnPoint": "9",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 22,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 22,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 23,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 23.5,
+   "spawnPoint": "1",
+   "vehicleType": "van"
+  },
+  {
+   "time": 24,
+   "spawnPoint": "4",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 24.5,
+   "spawnPoint": "10",
+   "vehicleType": "car"
+  },
+  {
+   "time": 25,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 25.5,
+   "spawnPoint": "11",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 25.5,
+   "spawnPoint": "7",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 25.5,
+   "spawnPoint": "8",
+   "vehicleType": "car"
+  },
+  {
+   "time": 26.5,
+   "spawnPoint": "12",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 27,
+   "spawnPoint": "6",
+   "vehicleType": "van"
+  },
+  {
+   "time": 27,
+   "spawnPoint": "9",
+   "vehicleType": "car"
+  },
+  {
+   "time": 29,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 30,
+   "spawnPoint": "3",
+   "vehicleType": "van"
+  },
+  {
+   "time": 30,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 30.5,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 30.5,
+   "spawnPoint": "7",
+   "vehicleType": "car"
+  },
+  {
+   "time": 31,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 31.5,
+   "spawnPoint": "10",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 31.5,
+   "spawnPoint": "8",
+   "vehicleType": "car"
+  },
+  {
+   "time": 32,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 32.5,
+   "spawnPoint": "11",
+   "vehicleType": "car"
+  },
+  {
+   "time": 33,
+   "spawnPoint": "9",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 33.5,
+   "spawnPoint": "12",
+   "vehicleType": "car"
+  },
+  {
+   "time": 35.5,
+   "spawnPoint": "7",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 36,
+   "spawnPoint": "2",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 36,
+   "spawnPoint": "4",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 37,
+   "spawnPoint": "3",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 37,
+   "spawnPoint": "5",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 37,
+   "spawnPoint": "6",
+   "vehicleType": "tractor"
+  },
+  {
+   "time": 37.5,
+   "spawnPoint": "1",
+   "vehicleType": "van"
+  },
+  {
+   "time": 37.5,
+   "spawnPoint": "8",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 38.5,
+   "spawnPoint": "10",
+   "vehicleType": "tractor"
+  },
+  {
+   "time": 39,
+   "spawnPoint": "9",
+   "vehicleType": "car"
+  },
+  {
+   "time": 39.5,
+   "spawnPoint": "11",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 40.5,
+   "spawnPoint": "12",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 40.5,
+   "spawnPoint": "7",
+   "vehicleType": "car"
+  },
+  {
+   "time": 42,
+   "spawnPoint": "4",
+   "vehicleType": "van"
+  },
+  {
+   "time": 42,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 43,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 43,
+   "spawnPoint": "5",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 43.5,
+   "spawnPoint": "8",
+   "vehicleType": "van"
+  },
+  {
+   "time": 44,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 44.5,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 45,
+   "spawnPoint": "9",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 45.5,
+   "spawnPoint": "10",
+   "vehicleType": "car"
+  },
+  {
+   "time": 45.5,
+   "spawnPoint": "7",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 46.5,
+   "spawnPoint": "11",
+   "vehicleType": "car"
+  },
+  {
+   "time": 47,
+   "spawnPoint": "6",
+   "vehicleType": "van"
+  },
+  {
+   "time": 47.5,
+   "spawnPoint": "12",
+   "vehicleType": "car"
+  },
+  {
+   "time": 48,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 49,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 49.5,
+   "spawnPoint": "8",
+   "vehicleType": "car"
+  },
+  {
+   "time": 50,
+   "spawnPoint": "2",
+   "vehicleType": "car"
+  },
+  {
+   "time": 50.5,
+   "spawnPoint": "7",
+   "vehicleType": "car"
+  },
+  {
+   "time": 51,
+   "spawnPoint": "3",
+   "vehicleType": "van"
+  },
+  {
+   "time": 51,
+   "spawnPoint": "9",
+   "vehicleType": "car"
+  },
+  {
+   "time": 51.5,
+   "spawnPoint": "1",
+   "vehicleType": "van"
+  },
+  {
+   "time": 52,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 52.5,
+   "spawnPoint": "10",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 53.5,
+   "spawnPoint": "11",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 54,
+   "spawnPoint": "4",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 54.5,
+   "spawnPoint": "12",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 55,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 55.5,
+   "spawnPoint": "7",
+   "vehicleType": "bus"
+  },
+  {
+   "time": 55.5,
+   "spawnPoint": "8",
+   "vehicleType": "car"
+  },
+  {
+   "time": 57,
+   "spawnPoint": "2",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 57,
+   "spawnPoint": "6",
+   "vehicleType": "tractor"
+  },
+  {
+   "time": 57,
+   "spawnPoint": "9",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 58,
+   "spawnPoint": "3",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 58.5,
+   "spawnPoint": "1",
+   "vehicleType": "car"
+  },
+  {
+   "time": 59.5,
+   "spawnPoint": "10",
+   "vehicleType": "tractor"
+  },
+  {
+   "time": 60,
+   "spawnPoint": "4",
+   "vehicleType": "car"
+  },
+  {
+   "time": 60.5,
+   "spawnPoint": "11",
+   "vehicleType": "car"
+  },
+  {
+   "time": 61,
+   "spawnPoint": "5",
+   "vehicleType": "truck"
+  },
+  {
+   "time": 61.5,
+   "spawnPoint": "12",
+   "vehicleType": "car"
+  },
+  {
+   "time": 62,
+   "spawnPoint": "6",
+   "vehicleType": "car"
+  },
+  {
+   "time": 63,
+   "spawnPoint": "9",
+   "vehicleType": "car"
+  }
+ ],
+ "vehicleTypes": {
+  "car": {
+   "name": "Auto",
+   "kind": "car",
+   "length": 4.5,
+   "width": 2,
+   "maxSpeed": 14,
+   "acceleration": 2.5,
+   "deceleration": 4,
+   "minGap": 1.5
+  },
+  "truck": {
+   "name": "Vrachtwagen",
+   "kind": "truck",
+   "length": 10,
+   "width": 2.5,
+   "maxSpeed": 11,
+   "acceleration": 1.2,
+   "deceleration": 3,
+   "minGap": 2
+  },
+  "motorcycle": {
+   "name": "Motor",
+   "kind": "motorcycle",
+   "length": 2.2,
+   "width": 0.9,
+   "maxSpeed": 14,
+   "acceleration": 4,
+   "deceleration": 5,
+   "minGap": 1
+  },
+  "bus": {
+   "name": "Bus",
+   "kind": "bus",
+   "length": 12,
+   "width": 2.5,
+   "maxSpeed": 11,
+   "acceleration": 1,
+   "deceleration": 2.5,
+   "minGap": 2.5
+  },
+  "van": {
+   "name": "Bestelbus",
+   "kind": "van",
+   "length": 6,
+   "width": 2.2,
+   "maxSpeed": 13,
+   "acceleration": 2,
+   "deceleration": 3.5,
+   "minGap": 1.5
+  },
+  "tractor": {
+   "name": "Tractor",
+   "kind": "tractor",
+   "length": 5,
+   "width": 2.4,
+   "maxSpeed": 8,
+   "acceleration": 1,
+   "deceleration": 3,
+   "minGap": 2
+  }
+ },
+ "constants": {
+  "clearanceTime": 2,
+  "reactionTime": 0.3,
+  "greenRange": {
+   "min": 1,
+   "max": 60,
+   "step": 0.1
+  },
+  "offsetRange": {
+   "min": 0,
+   "max": 60,
+   "step": 0.1
+  }
+ },
+ "targetTime": 109,
+ "collisionMode": "strict",
+ "defaultLightSettings": {
+  "A": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "B": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "C": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "D": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "E": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "F": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "G": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "H": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  },
+  "I": {
+   "green": {
+    "A": 10,
+    "B": 10
+   },
+   "offset": 0
+  }
+ }
+}
