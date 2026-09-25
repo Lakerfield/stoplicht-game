@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { GameSession } from '../services/game-session';
+import { PreferencesStore } from '../services/preferences-store';
 import { OPPOSITE, rightOf, SIDE_DIR, SIDES, TILE_SIZE, vehicleKindOf, type IntersectionInfo, type LightColor, type TileInfo, type Vehicle } from '../sim';
 import { THEME } from './theme';
 
@@ -10,6 +11,12 @@ const TILE_PX = TILE_SIZE * PX_PER_M;
 const DRAG_THRESHOLD = 10;
 const MIN_ZOOM_FACTOR = 0.5;
 const MAX_ZOOM = 3;
+/** frame rate while nothing moves (before the start, paused, finished, crashed) */
+const IDLE_FPS = 5;
+/** keep full frame rate this long after any interaction or state change */
+const ACTIVE_GRACE_MS = 1500;
+/** 'max' mode: effectively uncapped */
+const MAX_FPS = 240;
 
 interface SignalGeometry {
   intersectionIndex: number;
@@ -60,9 +67,13 @@ export class GameScene extends Phaser.Scene {
   private dragStart: { x: number; y: number; scrollX: number; scrollY: number } | null = null;
   private dragging = false;
   private pinchStart: { distance: number; zoom: number } | null = null;
+  private appliedFps = 0;
+  private idleWake: ReturnType<typeof setTimeout> | null = null;
+  private readonly prefs: PreferencesStore;
 
-  constructor(private readonly session: GameSession) {
+  constructor(private readonly session: GameSession, prefs?: PreferencesStore) {
     super('game');
+    this.prefs = prefs ?? new PreferencesStore();
   }
 
   create(): void {
@@ -75,10 +86,22 @@ export class GameScene extends Phaser.Scene {
     this.finalMarker = this.add.graphics().setDepth(6);
     this.crashMarker = this.add.rectangle(0, 0, TILE_PX, TILE_PX, THEME.crash, 0.55).setVisible(false);
     this.setupInput();
-    this.scale.on(Phaser.Scale.Events.RESIZE, () => this.fitCamera(false));
+    this.scale.on(Phaser.Scale.Events.RESIZE, () => {
+      this.wakeNow();
+      this.fitCamera(false);
+    });
+    // Phaser's own listeners only run inside a step, so wake on raw DOM input while the loop sleeps
+    const canvas = this.game.canvas;
+    for (const type of ['pointerdown', 'pointermove', 'wheel', 'touchstart'] as const) {
+      canvas.addEventListener(type, () => this.wakeNow(), { passive: true });
+    }
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      if (this.idleWake) clearTimeout(this.idleWake);
+    });
   }
 
   update(_time: number, delta: number): void {
+    this.applyFrameRate();
     const level = this.session.level;
     if (!level || !this.session.network || !this.session.sim) return;
     if (this.renderedLevelId !== level.id) this.buildMap();
@@ -160,6 +183,62 @@ export class GameScene extends Phaser.Scene {
         badge.bg.fillStyle(0xcfe8ff, 1).fillRect(-w / 2 + 15, -2.5, 2.5, 5);
         badge.text.setPosition(7, 0);
       }
+    }
+  }
+
+  // ---------------------------------------------------------------- frame rate
+
+  /** Frame rate for a running simulation, from the preference ('auto' = 30 on touch devices). */
+  private runFps(): number {
+    switch (this.prefs.get('fpsMode')) {
+      case '30':
+        return 30;
+      case '60':
+        return 60;
+      case 'max':
+        return MAX_FPS;
+      default:
+        return this.sys.game.device.input.touch && matchMedia('(pointer: coarse)').matches ? 30 : 60;
+    }
+  }
+
+  /**
+   * Full rate while running or shortly after interaction. When idle the loop is put to sleep after this
+   * frame (no requestAnimationFrame at all) and woken by a timer for a single frame at IDLE_FPS.
+   */
+  private applyFrameRate(): void {
+    const active = this.session.runState === 'running' || performance.now() - this.session.activityAt < ACTIVE_GRACE_MS;
+    const loop = this.game.loop as Phaser.Core.TimeStep & { _limitRate: number };
+    if (active) {
+      if (this.idleWake) {
+        clearTimeout(this.idleWake);
+        this.idleWake = null;
+      }
+      const target = this.runFps();
+      if (target !== this.appliedFps) {
+        this.appliedFps = target;
+        loop.fpsLimit = target;
+        loop._limitRate = 1000 / target;
+      }
+      return;
+    }
+    if (this.idleWake) return;
+    // this frame still renders; afterwards the loop sleeps until the timer wakes it for the next idle frame
+    loop.sleep();
+    this.idleWake = setTimeout(() => {
+      this.idleWake = null;
+      if (!this.sys.isActive()) return;
+      loop.wake(true);
+    }, 1000 / IDLE_FPS);
+  }
+
+  /** Any DOM interaction while asleep must wake the loop immediately (pan, tap, wheel). */
+  private wakeNow(): void {
+    this.session.touch();
+    if (this.idleWake) {
+      clearTimeout(this.idleWake);
+      this.idleWake = null;
+      this.game.loop.wake(true);
     }
   }
 
@@ -664,6 +743,7 @@ export class GameScene extends Phaser.Scene {
     this.input.addPointer(1);
 
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (p: Phaser.Input.Pointer) => {
+      this.session.touch();
       const active = this.activePointers();
       if (active.length >= 2) {
         this.pinchStart = { distance: pointerDistance(active[0], active[1]), zoom: cam.zoom };
@@ -675,6 +755,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.on(Phaser.Input.Events.POINTER_MOVE, (p: Phaser.Input.Pointer) => {
+      if (p.isDown) this.session.touch();
       const active = this.activePointers();
       if (this.pinchStart && active.length >= 2) {
         const d = pointerDistance(active[0], active[1]);
@@ -704,6 +785,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.on(Phaser.Input.Events.POINTER_WHEEL, (p: Phaser.Input.Pointer, _objs: unknown, _dx: number, dy: number) => {
+      this.session.touch();
       const factor = dy > 0 ? 1 / 1.15 : 1.15;
       this.setZoom(cam.zoom * factor, p.x, p.y);
     });

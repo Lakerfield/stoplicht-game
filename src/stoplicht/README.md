@@ -45,6 +45,12 @@ nog eens om `index.json` bij te werken.
 Voertuigtypes (defaults in `src/sim/defaults.ts`): auto, vrachtwagen, motor, bus, bestelbus, tractor. Het veld `kind`
 bepaalt alleen de tekenstijl; het gedrag volgt uit lengte, topsnelheid, acceleratie, remvermogen en volgafstand.
 
+## Energie en framerate
+
+Bij stilstand (voor de start, pauze, resultaat, botsing) slaapt de Phaser-renderlus en wordt hij 5× per seconde
+gewekt voor één frame; elke aanraking van de kaart of instelling wekt hem direct en houdt 1,5 s vol tempo aan.
+Tijdens de run geldt de menukeuze **fps**: auto (30 op touch-apparaten, 60 op desktop), 30, 60 of max.
+
 ## Deploy naar GitHub Pages
 
 Workflow `.github/workflows/deploy-pages.yml` (handmatig starten via *Actions → Deploy to GitHub Pages → Run workflow*).

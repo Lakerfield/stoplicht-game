@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 declare module '*.html' {
   import { IContainer, PartialBindableDefinition } from 'aurelia';
   export const name: string;

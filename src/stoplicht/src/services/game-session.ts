@@ -61,6 +61,13 @@ export class GameSession {
   selectedSignal: SignalState | null = null;
   /** light settings copied from one intersection, to paste into another */
   clipboard: LightSettings | null = null;
+  /** last moment something visible changed outside the simulation (input, state change); drives frame-rate throttling */
+  activityAt = 0;
+
+  /** Called on user interaction or state changes so the renderer briefly runs at full frame rate. */
+  touch(): void {
+    this.activityAt = performance.now();
+  }
   /** the crash dialog appears a moment after the crash so the animation stays visible */
   crashDialogVisible = false;
   private crashDialogTimer: ReturnType<typeof setTimeout> | null = null;
@@ -110,6 +117,7 @@ export class GameSession {
 
   /** Called by sliders: at t = 0 the light preview follows immediately; while paused a restart is required. */
   settingsChanged(): void {
+    this.touch();
     if (this.runState === 'idle') this.rebuild();
     else if (this.runState === 'paused') this.settingsDirty = true;
     this.persistDraft();
@@ -127,11 +135,13 @@ export class GameSession {
   }
 
   start(): void {
+    this.touch();
     this.audio.unlock();
     if (this.runState === 'idle' || this.runState === 'paused') this.runState = 'running';
   }
 
   pause(): void {
+    this.touch();
     if (this.runState === 'running') this.runState = 'paused';
   }
 
@@ -179,6 +189,7 @@ export class GameSession {
   }
 
   selectIntersection(id: string | null): void {
+    this.touch();
     this.selectedIntersectionId = id;
     this.syncMirrors();
   }
@@ -218,6 +229,7 @@ export class GameSession {
 
   private rebuild(): void {
     if (!this.level || !this.network) return;
+    this.touch();
     this.sim = new Simulation(this.level, cloneSettings(this.settings), this.network);
     this.runState = 'idle';
     this.accumulator = 0;
@@ -251,6 +263,7 @@ export class GameSession {
   }
 
   private finish(): void {
+    this.touch();
     const sim = this.sim!;
     const level = this.level!;
     this.runState = 'finished';
@@ -275,6 +288,7 @@ export class GameSession {
   }
 
   private crash(): void {
+    this.touch();
     this.runState = 'crashed';
     this.alpha = 1;
     this.collision = this.sim?.collision ?? null;

@@ -72,7 +72,15 @@
     "hideEditor": "hide editor",
     "editorUnlocked": "Editor unlocked",
     "devUnlocked": "dev mode: all levels playable",
-    "cloneToEditor": "Copy to editor"
+    "cloneToEditor": "Copy to editor",
+    "fps": "fps",
+    "fpsHint": "Frame rate while running. Auto: 30 on phones/tablets, 60 on desktop. Idle always drops to 5 fps to save energy.",
+    "fpsMode": {
+      "auto": "auto",
+      "30": "30",
+      "60": "60",
+      "max": "max"
+    }
   },
   "editor": {
     "title": "Level editor",

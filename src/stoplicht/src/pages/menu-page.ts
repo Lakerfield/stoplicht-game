@@ -6,7 +6,7 @@ import { cloneLevel } from './editor-page';
 import { AudioService } from '../services/audio-service';
 import { EditorStore } from '../services/editor-store';
 import { LevelLoader, type LevelManifestEntry } from '../services/level-loader';
-import { PreferencesStore, type Locale } from '../services/preferences-store';
+import { FPS_MODES, PreferencesStore, type FpsMode, type Locale } from '../services/preferences-store';
 import { ProgressStore } from '../services/progress-store';
 
 interface LevelRow extends LevelManifestEntry {
@@ -32,6 +32,7 @@ export class MenuPage {
   error: string | null = null;
   editorUnlocked = this.prefs.get('editorUnlocked');
   locale: Locale = this.prefs.get('locale');
+  fpsMode: FpsMode = this.prefs.get('fpsMode');
   toast: string | null = null;
 
   private taps = 0;
@@ -68,6 +69,13 @@ export class MenuPage {
     } catch (e) {
       this.error = e instanceof Error ? e.message : String(e);
     }
+  }
+
+  /** auto → 30 → 60 → max → auto */
+  cycleFpsMode(): void {
+    const next = FPS_MODES[(FPS_MODES.indexOf(this.fpsMode) + 1) % FPS_MODES.length];
+    this.fpsMode = next;
+    this.prefs.set('fpsMode', next);
   }
 
   async toggleLocale(): Promise<void> {

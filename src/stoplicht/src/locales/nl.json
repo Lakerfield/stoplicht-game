@@ -72,7 +72,15 @@
     "hideEditor": "editor verbergen",
     "editorUnlocked": "Editor ontgrendeld",
     "devUnlocked": "dev-modus: alle levels speelbaar",
-    "cloneToEditor": "Kopieer naar editor"
+    "cloneToEditor": "Kopieer naar editor",
+    "fps": "fps",
+    "fpsHint": "Framerate tijdens het rijden. Auto: 30 op telefoon/tablet, 60 op desktop. Bij stilstand altijd 5 fps om energie te sparen.",
+    "fpsMode": {
+      "auto": "auto",
+      "30": "30",
+      "60": "60",
+      "max": "max"
+    }
   },
   "editor": {
     "title": "Level-editor",

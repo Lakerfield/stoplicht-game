@@ -30,6 +30,7 @@
   <footer class="menu-footer">
     <button type="button" class="btn" click.trigger="toggleLocale()" aria-label="${'menu.language' | t}">${locale === 'nl' ? 'EN' : 'NL'}</button>
     <button type="button" class="btn" click.trigger="audio.toggleMuted()" aria-label="${'hud.mute' | t}">${audio.muted ? '🔇' : '🔊'}</button>
+    <button type="button" class="btn text-sm" click.trigger="cycleFpsMode()" title="${'menu.fpsHint' | t}" aria-label="${'menu.fps' | t}">${'menu.fps' | t}: ${'menu.fpsMode.' + fpsMode | t}</button>
     <template if.bind="editorUnlocked">
       <button type="button" class="btn" click.trigger="openEditor()">🛠 ${'menu.editor' | t}</button>
       <span class="text-xs opacity-60">${'menu.devUnlocked' | t}</span>
