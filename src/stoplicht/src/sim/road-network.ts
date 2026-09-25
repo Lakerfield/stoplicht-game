@@ -45,6 +45,8 @@ export interface IntersectionInfo {
   center: Vec2;
   lightGroups: LightGroupDef[];
   approachToGroup: Record<Side, string | undefined>;
+  /** green/amber of all groups stay coupled (puzzle rule) */
+  symmetric: boolean;
 }
 
 /** Where a route crosses an intersection, in path distance (m). */
@@ -191,7 +193,7 @@ export class RoadNetwork {
         .filter(g => g.approaches.length > 0);
       const approachToGroup: Record<Side, string | undefined> = { N: undefined, E: undefined, S: undefined, W: undefined };
       for (const g of groups) for (const a of g.approaches) approachToGroup[a] = g.id;
-      const info: IntersectionInfo = { id, x: tile.x, y: tile.y, center: this.tileCenter(tile.x, tile.y), lightGroups: groups, approachToGroup };
+      const info: IntersectionInfo = { id, x: tile.x, y: tile.y, center: this.tileCenter(tile.x, tile.y), lightGroups: groups, approachToGroup, symmetric: def?.symmetric === true };
       this.intersections.push(info);
       this.intersectionByKey.set(key, info);
       if (this.intersectionById.has(id)) throw new Error(`Duplicate intersection id ${id}`);

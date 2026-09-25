@@ -93,7 +93,10 @@
           <div class="form-grid three">
             <label>${'editor.greenA' | t}<input type="number" min="1" step="0.1" value.bind="level.defaultLightSettings[k.id].green.A | num" change.trigger="changed()"></label>
             <label>${'editor.greenB' | t}<input type="number" min="1" step="0.1" value.bind="level.defaultLightSettings[k.id].green.B | num" change.trigger="changed()"></label>
-            <label>${'editor.offset' | t}<input type="number" min="0" step="0.1" value.bind="level.defaultLightSettings[k.id].offset | num" change.trigger="changed()"></label>
+            <label>${'editor.offset' | t}<input type="number" step="0.1" value.bind="level.defaultLightSettings[k.id].offset | num" change.trigger="changed()"></label>
+            <label>${'editor.amberA' | t}<input type="number" min="1" step="0.1" value.bind="level.defaultLightSettings[k.id].amber.A | num" change.trigger="changed()"></label>
+            <label>${'editor.amberB' | t}<input type="number" min="1" step="0.1" value.bind="level.defaultLightSettings[k.id].amber.B | num" change.trigger="changed()"></label>
+            <label class="inline-flex items-center gap-2 self-end" style="flex-direction: row"><input type="checkbox" checked.bind="k.symmetric" change.trigger="toggleSymmetric(k)"> ${'editor.symmetric' | t}</label>
           </div>
         </div>
       </details>
@@ -142,6 +145,13 @@
               <input type="number" value.bind="level.constants.offsetRange.min | num" change.trigger="changed()">
               <input type="number" value.bind="level.constants.offsetRange.max | num" change.trigger="changed()">
               <input type="number" step="0.1" value.bind="level.constants.offsetRange.step | num" change.trigger="changed()">
+            </span>
+          </label>
+          <label>${'editor.amberRange' | t}
+            <span class="flex gap-1">
+              <input type="number" value.bind="level.constants.amberRange.min | num" change.trigger="changed()">
+              <input type="number" value.bind="level.constants.amberRange.max | num" change.trigger="changed()">
+              <input type="number" step="0.1" value.bind="level.constants.amberRange.step | num" change.trigger="changed()">
             </span>
           </label>
           <div>${'editor.locked' | t}:

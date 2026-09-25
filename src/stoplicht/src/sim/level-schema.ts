@@ -31,6 +31,8 @@ export interface IntersectionDef {
   id: string;
   at: GridPoint;
   lightGroups?: LightGroupDef[];
+  /** puzzle rule: green and amber times of all groups stay coupled; the player cannot unlink them */
+  symmetric?: boolean;
 }
 
 /** Entry point on the map edge. `route` = waypoints after `at`; omitted = keep driving straight ahead. */
@@ -71,23 +73,30 @@ export interface ParamRange {
   step: number;
 }
 
-export type LightParam = 'green' | 'offset';
+export type LightParam = 'green' | 'amber' | 'offset';
 
 export interface LevelConstants {
-  /** all-red / amber time between phases, seconds */
+  /** default amber (clearance) time after each green phase, seconds; the player may change it within amberRange */
   clearanceTime: number;
   /** delay before a standing vehicle reacts to green / to its leader moving, seconds */
   reactionTime: number;
   greenRange: ParamRange;
   offsetRange: ParamRange;
+  /** range for the amber time; defaults to 1–10 s when absent */
+  amberRange?: ParamRange;
   /** parameters the player may not change in this level (tutorial levels) */
   lockedParams?: LightParam[];
 }
 
-/** Player-adjustable settings of one intersection. `green` is keyed by light-group id. */
+/** Player-adjustable settings of one intersection. `green` and `amber` are keyed by light-group id. */
 export interface LightSettings {
   green: Record<string, number>;
+  /** amber (clearance) time after each group's green; falls back to constants.clearanceTime when absent */
+  amber?: Record<string, number>;
+  /** cycle start shift, seconds (may be negative) */
   offset: number;
+  /** UI coupling: editing one group's green/amber applies to all groups (default true) */
+  linked?: boolean;
 }
 
 export type CollisionMode = 'strict' | 'mild';

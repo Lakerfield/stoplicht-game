@@ -59,6 +59,8 @@ export class GameSession {
   collision: CollisionInfo | null = null;
   /** signal state of the selected intersection, refreshed every frame for the panel */
   selectedSignal: SignalState | null = null;
+  /** light settings copied from one intersection, to paste into another */
+  clipboard: LightSettings | null = null;
   /** the crash dialog appears a moment after the crash so the animation stays visible */
   crashDialogVisible = false;
   private crashDialogTimer: ReturnType<typeof setTimeout> | null = null;
@@ -75,7 +77,8 @@ export class GameSession {
     this.trackProgress = options.trackProgress ?? true;
     this.network = new RoadNetwork(level);
     const best = this.trackProgress ? this.progress.get(level.id) : undefined;
-    this.settings = completeLightSettings(this.network, level, best?.bestSettings);
+    const draft = this.trackProgress ? this.progress.getDraft(level.id) : undefined;
+    this.settings = completeLightSettings(this.network, level, draft ?? best?.bestSettings);
     this.selectedIntersectionId = null;
     this.rebuild();
   }
@@ -109,6 +112,12 @@ export class GameSession {
   settingsChanged(): void {
     if (this.runState === 'idle') this.rebuild();
     else if (this.runState === 'paused') this.settingsDirty = true;
+    this.persistDraft();
+  }
+
+  /** working settings survive a reload */
+  private persistDraft(): void {
+    if (this.level && this.trackProgress) this.progress.saveDraft(this.level.id, cloneSettings(this.settings));
   }
 
   /** Back to t = 0 with the current settings and run immediately. */
@@ -139,6 +148,34 @@ export class GameSession {
 
   setSpeed(speed: Speed): void {
     this.speed = speed;
+  }
+
+  copySettings(id: string): void {
+    const s = this.settings[id];
+    if (s) this.clipboard = cloneSettings({ s }).s;
+  }
+
+  /** Applies the copied settings per light group; locked parameters and symmetric coupling are respected. */
+  pasteSettings(id: string): boolean {
+    const target = this.settings[id];
+    const info = this.network?.intersectionById.get(id);
+    const src = this.clipboard;
+    if (!target || !info || !src || !this.canEditSettings) return false;
+    const locked = new Set(this.level?.constants.lockedParams ?? []);
+    const groups = info.lightGroups.map(g => g.id);
+    const first = groups[0];
+    for (const g of groups) {
+      const from = info.symmetric ? first : g;
+      if (!locked.has('green') && src.green[from] !== undefined) target.green[g] = src.green[from];
+      if (!locked.has('amber') && src.amber?.[from] !== undefined) {
+        target.amber ??= {};
+        target.amber[g] = src.amber[from];
+      }
+    }
+    if (!locked.has('offset')) target.offset = src.offset;
+    target.linked = info.symmetric ? true : (src.linked ?? true);
+    this.settingsChanged();
+    return true;
   }
 
   selectIntersection(id: string | null): void {
@@ -252,7 +289,7 @@ export class GameSession {
 export function cloneSettings(settings: Record<string, LightSettings>): Record<string, LightSettings> {
   const out: Record<string, LightSettings> = {};
   for (const [id, s] of Object.entries(settings)) {
-    out[id] = { green: { ...s.green }, offset: s.offset };
+    out[id] = { green: { ...s.green }, amber: { ...(s.amber ?? {}) }, offset: s.offset, linked: s.linked };
   }
   return out;
 }

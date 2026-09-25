@@ -1,4 +1,4 @@
-import type { LevelConstants, LightGroupDef, VehicleKind, VehicleTypeDef } from './level-schema';
+import type { LevelConstants, LightGroupDef, ParamRange, VehicleKind, VehicleTypeDef } from './level-schema';
 
 /** meters per tile */
 export const TILE_SIZE = 8;
@@ -24,11 +24,14 @@ export function vehicleKindOf(type: VehicleTypeDef): VehicleKind {
   return type.kind ?? (type.length >= 7 ? 'truck' : 'car');
 }
 
+export const DEFAULT_AMBER_RANGE: ParamRange = { min: 1, max: 10, step: 0.1 };
+
 export const DEFAULT_CONSTANTS: LevelConstants = {
   clearanceTime: 2,
   reactionTime: 0.3,
-  greenRange: { min: 1, max: 60, step: 0.1 },
-  offsetRange: { min: 0, max: 60, step: 0.1 },
+  greenRange: { min: 1, max: 30, step: 0.1 },
+  offsetRange: { min: -30, max: 30, step: 0.1 },
+  amberRange: DEFAULT_AMBER_RANGE,
 };
 
 export const DEFAULT_LIGHT_GROUPS: LightGroupDef[] = [

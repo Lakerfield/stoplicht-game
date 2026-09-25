@@ -11,7 +11,9 @@ TYPES = {
     "van": {"name": "Bestelbus", "kind": "van", "length": 6, "width": 2.2, "maxSpeed": 13, "acceleration": 2, "deceleration": 3.5, "minGap": 1.5},
     "tractor": {"name": "Tractor", "kind": "tractor", "length": 5, "width": 2.4, "maxSpeed": 8, "acceleration": 1, "deceleration": 3, "minGap": 2},
 }
-CONST = {"clearanceTime": 2, "reactionTime": 0.3, "greenRange": {"min": 1, "max": 60, "step": 0.1}, "offsetRange": {"min": 0, "max": 60, "step": 0.1}}
+CONST = {"clearanceTime": 2, "reactionTime": 0.3, "greenRange": {"min": 1, "max": 30, "step": 0.1}, "offsetRange": {"min": -30, "max": 30, "step": 0.1}, "amberRange": {"min": 1, "max": 10, "step": 0.1}}
+# junctions whose green/amber stay coupled (puzzle rule): level -> junction letters ("*" = all)
+SYMMETRIC = {3: ["A"], 7: ["B"], 12: ["*"], 14: ["B"], 17: ["*"], 19: ["A", "D"], 20: ["A", "E", "I"]}
 SIDES = {(0, -1): "N", (1, 0): "E", (0, 1): "S", (-1, 0): "W"}
 OPP = {"N": "S", "S": "N", "E": "W", "W": "E"}
 
@@ -99,6 +101,18 @@ def letter(i):
     return out
 
 
+def is_symmetric(num, jid):
+    rule = SYMMETRIC.get(num, [])
+    return "*" in rule or jid in rule
+
+
+def junction_def(num, i, t):
+    d = {"id": letter(i), "at": list(t), "lightGroups": [{"id": "A", "approaches": ["N", "S"]}, {"id": "B", "approaches": ["E", "W"]}]}
+    if is_symmetric(num, letter(i)):
+        d["symmetric"] = True
+    return d
+
+
 def level(num, name, grid, roads, spawns, mode):
     w, h = grid
     junctions, points = analyse(roads, w, h)
@@ -114,14 +128,14 @@ def level(num, name, grid, roads, spawns, mode):
         "name": name,
         "grid": {"width": w, "height": h},
         "roads": roads,
-        "intersections": [{"id": letter(i), "at": list(t), "lightGroups": [{"id": "A", "approaches": ["N", "S"]}, {"id": "B", "approaches": ["E", "W"]}]} for i, t in enumerate(junctions)],
+        "intersections": [junction_def(num, i, t) for i, t in enumerate(junctions)],
         "spawnPoints": [{"id": point_ids[t], "at": list(t)} for t, _ in points],
         "spawns": [{"time": t, "spawnPoint": point_ids[at], "vehicleType": typ} for at, t, typ in sorted(spawns, key=lambda s: (s[1], point_ids[s[0]]))],
         "vehicleTypes": {k: TYPES[k] for k in TYPES if k in used},
         "constants": CONST,
         "targetTime": 60,
         "collisionMode": mode,
-        "defaultLightSettings": {letter(i): {"green": {"A": 10, "B": 10}, "offset": 0} for i in range(len(junctions))},
+        "defaultLightSettings": {letter(i): {"green": {"A": 10, "B": 10}, "amber": {"A": 2, "B": 2}, "offset": 0, "linked": True} for i in range(len(junctions))},
     }
 
 

@@ -1,8 +1,14 @@
-<label class="block">
+<div class="param-slider">
   <div class="flex justify-between items-baseline text-sm mb-1">
     <span class="font-medium">${label}</span>
-    <span class="font-mono tabular-nums text-base">${display} ${unit}</span>
+    <span class="font-mono tabular-nums text-xl font-bold">${display} <span class="text-xs font-normal opacity-70">${unit}</span></span>
   </div>
-  <input type="range" class="slider" min.bind="min" max.bind="max" step.bind="step" value.to-view="value"
-    disabled.bind="disabled" input.trigger="onInput($event)">
-</label>
+  <div class="stepper">
+    <button type="button" class="btn step" disabled.bind="disabled" aria-label="−${step}"
+      pointerdown.trigger="holdStart($event, -1)" pointerup.trigger="holdEnd()" pointerleave.trigger="holdEnd()" pointercancel.trigger="holdEnd()">−</button>
+    <input type="range" class="slider" min.bind="min" max.bind="max" step.bind="step" value.to-view="value"
+      disabled.bind="disabled" input.trigger="onInput($event)">
+    <button type="button" class="btn step" disabled.bind="disabled" aria-label="+${step}"
+      pointerdown.trigger="holdStart($event, 1)" pointerup.trigger="holdEnd()" pointerleave.trigger="holdEnd()" pointercancel.trigger="holdEnd()">+</button>
+  </div>
+</div>

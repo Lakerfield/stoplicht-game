@@ -29,29 +29,47 @@ const rand = (): number => {
 };
 const round1 = (x: number): number => Math.round(x * 10) / 10;
 const { greenRange, offsetRange } = level.constants;
+const amberRange = level.constants.amberRange ?? { min: 1, max: 10, step: 0.1 };
+const symmetric = network.intersections.map(i => i.symmetric);
+const clampTo = (r: { min: number; max: number }, v: number): number => round1(Math.min(r.max, Math.max(r.min, v)));
 
 function randomSettings(): Settings {
   const s: Settings = {};
   ids.forEach((id, i) => {
-    s[id] = { green: {}, offset: round1(offsetRange.min + rand() * (offsetRange.max - offsetRange.min) * 0.5) };
-    for (const g of groups[i]) s[id].green[g] = round1(3 + rand() * 25);
+    s[id] = { green: {}, amber: {}, offset: round1(offsetRange.min + rand() * (offsetRange.max - offsetRange.min)), linked: symmetric[i] };
+    const g0 = round1(3 + rand() * Math.min(25, greenRange.max - 3));
+    const a0 = round1(amberRange.min + rand() * 2);
+    for (const g of groups[i]) {
+      s[id].green[g] = symmetric[i] ? g0 : round1(3 + rand() * Math.min(25, greenRange.max - 3));
+      s[id].amber![g] = symmetric[i] ? a0 : round1(amberRange.min + rand() * 2);
+    }
   });
   return s;
 }
 
+/** Variation of one parameter; on symmetric junctions the change applies to every group. */
 function neighbours(s: Settings, step: number): Settings[] {
   const out: Settings[] = [];
   ids.forEach((id, i) => {
-    for (const g of groups[i]) {
+    const targets = symmetric[i] ? [groups[i]] : groups[i].map(g => [g]);
+    for (const set of targets) {
       for (const d of [-step, step]) {
         const n = clone(s);
-        n[id].green[g] = round1(Math.min(greenRange.max, Math.max(greenRange.min, n[id].green[g] + d)));
+        for (const g of set) n[id].green[g] = clampTo(greenRange, n[id].green[g] + d);
         out.push(n);
+      }
+      if (step <= 1) {
+        for (const d of [-step, step]) {
+          const n = clone(s);
+          n[id].amber ??= {};
+          for (const g of set) n[id].amber![g] = clampTo(amberRange, (n[id].amber![g] ?? level.constants.clearanceTime) + d);
+          out.push(n);
+        }
       }
     }
     for (const d of [-step, step]) {
       const n = clone(s);
-      n[id].offset = round1(Math.min(offsetRange.max, Math.max(offsetRange.min, n[id].offset + d)));
+      n[id].offset = clampTo(offsetRange, n[id].offset + d);
       out.push(n);
     }
   });

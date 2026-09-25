@@ -13,6 +13,8 @@ export interface LevelProgress {
 interface ProgressData {
   version: 1;
   levels: Record<string, LevelProgress>;
+  /** the player's current working settings per level, restored after a reload */
+  drafts?: Record<string, Record<string, LightSettings>>;
 }
 
 const KEY = 'progress';
@@ -30,6 +32,16 @@ export class ProgressStore {
 
   save(levelId: string, progress: LevelProgress): void {
     this.data.levels[levelId] = progress;
+    this.storage.set(KEY, this.data);
+  }
+
+  getDraft(levelId: string): Record<string, LightSettings> | undefined {
+    return this.data.drafts?.[levelId];
+  }
+
+  saveDraft(levelId: string, settings: Record<string, LightSettings>): void {
+    this.data.drafts ??= {};
+    this.data.drafts[levelId] = settings;
     this.storage.set(KEY, this.data);
   }
 

@@ -4,6 +4,7 @@ import { resolve } from 'aurelia';
 import { EditorStore } from '../services/editor-store';
 import { LevelLoader, validateLevel, type LevelManifestEntry } from '../services/level-loader';
 import {
+  DEFAULT_AMBER_RANGE,
   DEFAULT_CONSTANTS,
   DEFAULT_LIGHT_GROUPS,
   DEFAULT_VEHICLE_TYPES,
@@ -166,7 +167,13 @@ export class EditorPage {
   }
 
   get lightParams(): LightParam[] {
-    return ['green', 'offset'];
+    return ['green', 'amber', 'offset'];
+  }
+
+  toggleSymmetric(def: IntersectionDef): void {
+    def.symmetric = !def.symmetric;
+    if (!def.symmetric) delete def.symmetric;
+    this.save();
   }
 
   get invalidSpawnCount(): number {
@@ -416,9 +423,15 @@ export class EditorPage {
     const defaults: LevelData['defaultLightSettings'] = {};
     for (const d of defs) {
       const green: Record<string, number> = {};
-      for (const g of d.lightGroups ?? DEFAULT_LIGHT_GROUPS) green[g.id] = this.level.defaultLightSettings[d.id]?.green[g.id] ?? 10;
-      defaults[d.id] = { green, offset: this.level.defaultLightSettings[d.id]?.offset ?? 0 };
+      const amber: Record<string, number> = {};
+      const old = this.level.defaultLightSettings[d.id];
+      for (const g of d.lightGroups ?? DEFAULT_LIGHT_GROUPS) {
+        green[g.id] = old?.green[g.id] ?? 10;
+        amber[g.id] = old?.amber?.[g.id] ?? this.level.constants.clearanceTime;
+      }
+      defaults[d.id] = { green, amber, offset: old?.offset ?? 0, linked: old?.linked ?? true };
     }
+    this.level.constants.amberRange ??= structuredClone(DEFAULT_AMBER_RANGE);
     this.level.defaultLightSettings = defaults;
     if (this.selectedIntersectionId && !defs.some(d => d.id === this.selectedIntersectionId)) this.selectedIntersectionId = null;
 

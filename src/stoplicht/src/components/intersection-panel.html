@@ -1,39 +1,64 @@
 <import from="./param-slider"></import>
 
 <aside class="panel" if.bind="intersection && settings && session.selectedSignal">
-  <header class="flex items-center justify-between gap-2 mb-3">
+  <header class="flex items-center justify-between gap-2 mb-2">
     <h2 class="text-lg font-semibold">${'panel.title' | t: { id: displayName }}</h2>
-    <button type="button" class="btn btn-icon" click.trigger="close()" aria-label="${'panel.close' | t}">✕</button>
+    <div class="flex items-center gap-1">
+      <button type="button" class="btn btn-icon icon-copy" done.class="copied" click.trigger="copy()" title="${'panel.copy' | t}" aria-label="${'panel.copy' | t}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+      </button>
+      <button type="button" class="btn btn-icon icon-paste" done.class="pasted" disabled.bind="!canPaste" click.trigger="paste()" title="${'panel.paste' | t}" aria-label="${'panel.paste' | t}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1H9z"/><path d="M9 13l2 2 4-4"/></svg>
+      </button>
+      <button type="button" class="btn btn-icon" click.trigger="close()" aria-label="${'panel.close' | t}">✕</button>
+    </div>
   </header>
 
-  <section class="mb-4">
-    <div class="text-xs uppercase tracking-wide opacity-60 mb-1">${'panel.phase' | t}</div>
-    <div class="flex gap-3">
-      <div repeat.for="g of intersection.lightGroups" class="flex items-center gap-2 text-sm">
-        <span class="lamp" data-color.bind="session.selectedSignal.colors[g.id]"></span>
-        <span>${'panel.group.' + g.id | t}</span>
-        <span class="font-mono tabular-nums opacity-70" if.bind="session.selectedSignal.colors[g.id] !== 'red'">${remaining()}s</span>
-      </div>
-    </div>
-  </section>
+  <!-- live phase -->
+  <div class="phase-now" title="${'panel.now' | t}">
+    <span class="now-label">${'panel.now' | t}</span>
+    <span repeat.for="g of groups" class="phase-item">
+      <span class="lamp" data-color.bind="session.selectedSignal.colors[g.id]"></span>
+      <span class="arrow">${arrowOf(g)}</span>
+      <span class="font-mono tabular-nums text-xs opacity-70" if.bind="session.selectedSignal.colors[g.id] !== 'red'">${remaining()}s</span>
+    </span>
+    <span class="grow"></span>
+    <span class="text-xs opacity-70">${'panel.cycle' | t} <span class="font-mono tabular-nums">${cycleSeconds.toFixed(1)}</span> s</span>
+  </div>
 
-  <section class="space-y-4">
-    <param-slider repeat.for="g of intersection.lightGroups"
-      label.bind="groupLabel(g.id)"
-      min.bind="constants.greenRange.min" max.bind="constants.greenRange.max" step.bind="constants.greenRange.step"
-      value.two-way="settings.green[g.id]"
-      disabled.bind="!session.canEditSettings || isLocked('green')"
-      input.trigger="session.settingsChanged()"></param-slider>
+  <!-- cycle bar: tap a part to edit it -->
+  <div class="cycle-bar" role="tablist" aria-label="${'panel.cycle' | t}">
+    <button repeat.for="p of parts" type="button" role="tab" class="cycle-part" class.bind="p.kind" aria-selected.bind="p.selected" selected.class="p.selected"
+      style="flex-basis: ${p.share * 100}%" click.trigger="select(p.key)" title="${(p.kind === 'green' ? 'panel.greenPart' : 'panel.amberPart') | t: { arrow: p.arrow, name: groupName(p.group) }}">
+      <span if.bind="p.kind === 'green'">${p.arrow} </span>${p.seconds.toFixed(1)}
+    </button>
+  </div>
 
-    <param-slider if.bind="!isLocked('offset')"
-      label.bind="'panel.offset' | t"
-      min.bind="constants.offsetRange.min" max.bind="constants.offsetRange.max" step.bind="constants.offsetRange.step"
-      value.two-way="settings.offset"
-      disabled.bind="!session.canEditSettings"
-      input.trigger="session.settingsChanged()"></param-slider>
-  </section>
+  <!-- offset row with the link toggle at the left -->
+  <div class="offset-row">
+    <button type="button" class="link-toggle" linked.class="isLinked" disabled.bind="linkFixed || !session.canEditSettings"
+      aria-pressed.bind="isLinked" click.trigger="toggleLink()"
+      title="${(linkFixed ? 'panel.linkedFixed' : (isLinked ? 'panel.linked' : 'panel.unlinked')) | t}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <g if.bind="isLinked"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></g>
+        <g else><path d="M9 17l-2 2a4 4 0 0 1-6-6l2-2"/><path d="M15 7l2-2a4 4 0 0 1 6 6l-2 2"/><path d="M8 12l-1.5-1.5M16 12l1.5 1.5"/><path d="M11 4v3M13 20v-3M4 11h3M20 13h-3"/></g>
+      </svg>
+      <span>${(linkFixed ? 'panel.linkedFixedShort' : (isLinked ? 'panel.linked' : 'panel.unlinked')) | t}</span>
+    </button>
+    <button type="button" class="offset-btn" selected.class="offsetSelected" click.trigger="selectOffset()">
+      ${'panel.offsetShort' | t} <span class="font-mono tabular-nums">${settings.offset > 0 ? '+' : ''}${settings.offset.toFixed(1)}</span> s
+    </button>
+  </div>
 
-  <p class="text-xs opacity-70 mt-3">Cyclus ${cycleSeconds.toFixed(1)} s</p>
+  <!-- one slider for the selected part -->
+  <div class="part-editor">
+    <param-slider label.bind="currentLabel"
+      min.bind="currentRange.min" max.bind="currentRange.max" step.bind="currentRange.step"
+      value.two-way="currentValue"
+      disabled.bind="!session.canEditSettings || currentLocked"
+      input.trigger="changed()"></param-slider>
+  </div>
+
   <p class="text-xs mt-2 text-amber-700" if.bind="session.runState === 'running'">${'panel.locked' | t}</p>
   <p class="text-xs mt-2 text-amber-700" if.bind="session.isOver">${'panel.over' | t}</p>
   <p class="text-xs mt-2 text-blue-700 font-medium" if.bind="session.needsRestart">${'panel.changed' | t}</p>

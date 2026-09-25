@@ -438,18 +438,31 @@ function boxesOverlap(a: Box, b: Box): boolean {
 }
 
 /** Settings used when a level does not specify defaults for an intersection. */
-export function fallbackLightSettings(info: IntersectionInfo): LightSettings {
+export function fallbackLightSettings(info: IntersectionInfo, clearanceTime = 2): LightSettings {
   const green: Record<string, number> = {};
-  for (const g of info.lightGroups) green[g.id] = 10;
-  return { green, offset: 0 };
+  const amber: Record<string, number> = {};
+  for (const g of info.lightGroups) {
+    green[g.id] = 10;
+    amber[g.id] = clearanceTime;
+  }
+  return { green, amber, offset: 0, linked: true };
 }
 
-/** Complete settings for every intersection of the network, filling gaps from level defaults or the fallback. */
+/**
+ * Complete settings for every intersection of the network, filling gaps (missing intersections, missing
+ * amber times from older saves, missing `linked`) from level defaults, constants or the fallback.
+ */
 export function completeLightSettings(network: RoadNetwork, level: LevelData, settings: Record<string, LightSettings> = {}): Record<string, LightSettings> {
   const out: Record<string, LightSettings> = {};
   for (const info of network.intersections) {
-    const s = settings[info.id] ?? level.defaultLightSettings[info.id] ?? fallbackLightSettings(info);
-    out[info.id] = { green: { ...s.green }, offset: s.offset };
+    const s = settings[info.id] ?? level.defaultLightSettings[info.id] ?? fallbackLightSettings(info, level.constants.clearanceTime);
+    const green: Record<string, number> = {};
+    const amber: Record<string, number> = {};
+    for (const g of info.lightGroups) {
+      green[g.id] = s.green[g.id] ?? level.defaultLightSettings[info.id]?.green[g.id] ?? 10;
+      amber[g.id] = s.amber?.[g.id] ?? level.defaultLightSettings[info.id]?.amber?.[g.id] ?? level.constants.clearanceTime;
+    }
+    out[info.id] = { green, amber, offset: s.offset ?? 0, linked: info.symmetric || (s.linked ?? true) };
   }
   return out;
 }

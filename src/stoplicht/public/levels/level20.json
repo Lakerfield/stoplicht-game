@@ -96,7 +96,8 @@
       "W"
      ]
     }
-   ]
+   ],
+   "symmetric": true
   },
   {
    "id": "B",
@@ -188,7 +189,8 @@
       "W"
      ]
     }
-   ]
+   ],
+   "symmetric": true
   },
   {
    "id": "F",
@@ -280,7 +282,8 @@
       "W"
      ]
     }
-   ]
+   ],
+   "symmetric": true
   }
  ],
  "spawnPoints": [
@@ -1048,16 +1051,21 @@
   "reactionTime": 0.3,
   "greenRange": {
    "min": 1,
-   "max": 60,
+   "max": 30,
    "step": 0.1
   },
   "offsetRange": {
-   "min": 0,
-   "max": 60,
+   "min": -30,
+   "max": 30,
+   "step": 0.1
+  },
+  "amberRange": {
+   "min": 1,
+   "max": 10,
    "step": 0.1
   }
  },
- "targetTime": 109,
+ "targetTime": 108.5,
  "collisionMode": "strict",
  "defaultLightSettings": {
   "A": {
@@ -1065,63 +1073,108 @@
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "B": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "C": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "D": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "E": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "F": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "G": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "H": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   },
   "I": {
    "green": {
     "A": 10,
     "B": 10
    },
-   "offset": 0
+   "amber": {
+    "A": 2,
+    "B": 2
+   },
+   "offset": 0,
+   "linked": true
   }
  }
 }

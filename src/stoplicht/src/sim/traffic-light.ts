@@ -4,11 +4,11 @@ import type { IntersectionInfo } from './road-network';
 
 export type LightColor = 'green' | 'amber' | 'red';
 
-/** Integer-tick signal schedule of one intersection; the cycle runs green(g0), clear, green(g1), clear, ... */
+/** Integer-tick signal schedule of one intersection; the cycle runs green(g0), amber(g0), green(g1), amber(g1), ... */
 export interface SignalPlan {
   groups: string[];
   greenTicks: number[];
-  clearanceTicks: number;
+  amberTicks: number[];
   offsetTicks: number;
   cycleTicks: number;
 }
@@ -32,9 +32,10 @@ export function buildSignalPlan(intersection: IntersectionInfo, settings: LightS
     if (g === undefined) throw new Error(`Missing green time for group ${id} at intersection ${intersection.id}`);
     return Math.max(1, secondsToTicks(g));
   });
-  const clearanceTicks = secondsToTicks(constants.clearanceTime);
-  const cycleTicks = greenTicks.reduce((sum, g) => sum + g + clearanceTicks, 0);
-  return { groups, greenTicks, clearanceTicks, offsetTicks: secondsToTicks(settings.offset), cycleTicks };
+  const amberTicks = groups.map(id => Math.max(1, secondsToTicks(settings.amber?.[id] ?? constants.clearanceTime)));
+  let cycleTicks = 0;
+  for (let i = 0; i < groups.length; i++) cycleTicks += greenTicks[i] + amberTicks[i];
+  return { groups, greenTicks, amberTicks, offsetTicks: secondsToTicks(settings.offset), cycleTicks };
 }
 
 export function signalStateAt(plan: SignalPlan, tick: number): SignalState {
@@ -51,7 +52,7 @@ export function signalStateAt(plan: SignalPlan, tick: number): SignalState {
       colors[g] = 'green';
       return { greenGroup: g, amberGroup: null, colors, cycleTick, ticksRemaining: greenEnd - cycleTick };
     }
-    const clearEnd = greenEnd + plan.clearanceTicks;
+    const clearEnd = greenEnd + plan.amberTicks[i];
     if (cycleTick < clearEnd) {
       colors[g] = 'amber';
       return { greenGroup: null, amberGroup: g, colors, cycleTick, ticksRemaining: clearEnd - cycleTick };

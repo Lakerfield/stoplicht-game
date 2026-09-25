@@ -5,28 +5,28 @@
       "id": "level1",
       "file": "level1.json",
       "name": "Eén kruispunt",
-      "targetTime": 34,
+      "targetTime": 30,
       "collisionMode": "mild"
     },
     {
       "id": "level2",
       "file": "level2.json",
       "name": "Groene golf",
-      "targetTime": 52,
+      "targetTime": 56,
       "collisionMode": "mild"
     },
     {
       "id": "level3",
       "file": "level3.json",
       "name": "Eenrichting",
-      "targetTime": 64.5,
+      "targetTime": 64,
       "collisionMode": "mild"
     },
     {
       "id": "level4",
       "file": "level4.json",
       "name": "Blokkade",
-      "targetTime": 70,
+      "targetTime": 80.5,
       "collisionMode": "strict"
     },
     {
@@ -40,105 +40,105 @@
       "id": "level6",
       "file": "level6.json",
       "name": "Het raster",
-      "targetTime": 91.5,
+      "targetTime": 88,
       "collisionMode": "strict"
     },
     {
       "id": "level7",
       "file": "level7.json",
       "name": "Buslijn",
-      "targetTime": 80.5,
+      "targetTime": 93.5,
       "collisionMode": "mild"
     },
     {
       "id": "level8",
       "file": "level8.json",
       "name": "Oogsttijd",
-      "targetTime": 79,
+      "targetTime": 82,
       "collisionMode": "mild"
     },
     {
       "id": "level9",
       "file": "level9.json",
       "name": "Motorclub",
-      "targetTime": 71,
+      "targetTime": 70,
       "collisionMode": "strict"
     },
     {
       "id": "level10",
       "file": "level10.json",
       "name": "Bezorgdienst",
-      "targetTime": 85,
+      "targetTime": 82.5,
       "collisionMode": "mild"
     },
     {
       "id": "level11",
       "file": "level11.json",
       "name": "Dubbele bocht",
-      "targetTime": 84.5,
+      "targetTime": 84,
       "collisionMode": "strict"
     },
     {
       "id": "level12",
       "file": "level12.json",
       "name": "Boulevard",
-      "targetTime": 98,
+      "targetTime": 121,
       "collisionMode": "strict"
     },
     {
       "id": "level13",
       "file": "level13.json",
       "name": "Eenrichtingsraster",
-      "targetTime": 117,
+      "targetTime": 116.5,
       "collisionMode": "strict"
     },
     {
       "id": "level14",
       "file": "level14.json",
       "name": "Trekkers en bussen",
-      "targetTime": 107.5,
+      "targetTime": 106,
       "collisionMode": "mild"
     },
     {
       "id": "level15",
       "file": "level15.json",
       "name": "Spitsuur",
-      "targetTime": 104.5,
+      "targetTime": 104,
       "collisionMode": "mild"
     },
     {
       "id": "level16",
       "file": "level16.json",
       "name": "Sluiproute",
-      "targetTime": 84.5,
+      "targetTime": 82,
       "collisionMode": "strict"
     },
     {
       "id": "level17",
       "file": "level17.json",
       "name": "Landweg",
-      "targetTime": 79,
+      "targetTime": 86,
       "collisionMode": "strict"
     },
     {
       "id": "level18",
       "file": "level18.json",
       "name": "Stadshart",
-      "targetTime": 108,
+      "targetTime": 106.5,
       "collisionMode": "mild"
     },
     {
       "id": "level19",
       "file": "level19.json",
       "name": "Nachtbus",
-      "targetTime": 117,
+      "targetTime": 117.5,
       "collisionMode": "strict"
     },
     {
       "id": "level20",
       "file": "level20.json",
       "name": "Grote finale",
-      "targetTime": 109,
+      "targetTime": 108.5,
       "collisionMode": "strict"
     }
   ]

@@ -15,6 +15,8 @@ export class PlayPage {
   readonly speeds = SPEEDS;
   levelId = 'level1';
   nextLevelId: string | null = null;
+  levelNumber: number | null = null;
+  levelName = '';
   error: string | null = null;
 
   get fromEditor(): boolean {
@@ -32,11 +34,15 @@ export class PlayPage {
         if (!level) throw new Error('No level in editor');
         this.session.loadLevel(validateLevel(level), { trackProgress: false });
         this.nextLevelId = null;
+        this.levelNumber = null;
+        this.levelName = level.name;
       } else {
         const [level, manifest] = await Promise.all([this.loader.load(this.levelId), this.loader.getManifest()]);
         this.session.loadLevel(level);
         const index = manifest.levels.findIndex(l => l.id === this.levelId);
         this.nextLevelId = index >= 0 && index + 1 < manifest.levels.length ? manifest.levels[index + 1].id : null;
+        this.levelNumber = index >= 0 ? index + 1 : null;
+        this.levelName = level.name;
       }
     } catch (e) {
       this.error = e instanceof Error ? e.message : String(e);

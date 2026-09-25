@@ -58,6 +58,53 @@ game-canvas canvas {
 .hud-top {
   top: 0;
   z-index: 10;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hud-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 52px;
+}
+
+.hud-time {
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
+}
+
+.hud-level {
+  font-size: 0.8rem;
+  font-weight: 600;
+  max-width: 14rem;
+}
+
+.hud-counts {
+  gap: 0.6rem;
+}
+
+@media (width < 640px) {
+  .hud-top {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .hud-time {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .hud-counts {
+    margin-left: auto;
+    font-size: 0.8rem;
+    gap: 0.45rem;
+  }
+
+  .hud-level {
+    max-width: 8rem;
+  }
 }
 
 .hud-bottom {
@@ -119,14 +166,16 @@ game-canvas canvas {
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  max-height: 60dvh;
+  max-height: 68dvh;
   overflow-y: auto;
   background: var(--card);
   border-top: 1px solid var(--border);
   border-radius: 1rem 1rem 0 0;
   box-shadow: var(--shadow);
   backdrop-filter: blur(8px);
-  padding: 1rem 1rem max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom)));
+
+  /* room for the two-row control bar on narrow screens */
+  padding: 1rem 1rem max(8.5rem, calc(7.5rem + env(safe-area-inset-bottom)));
   pointer-events: auto;
   z-index: 20;
 }
@@ -149,6 +198,160 @@ game-canvas canvas {
   height: 44px;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn.step {
+  font-size: 1.4rem;
+  padding: 0;
+  min-width: 48px;
+  min-height: 48px;
+  touch-action: none;
+  user-select: none;
+}
+
+/* ---- intersection panel: live phase, cycle bar, offset row ---- */
+.phase-now {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.now-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+
+.phase-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.phase-item .arrow {
+  font-size: 1.05rem;
+}
+
+.cycle-bar {
+  display: flex;
+  height: 56px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: rgb(31 41 55 / 8%);
+}
+
+.cycle-part {
+  flex: 0 0 auto;
+  min-width: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.cycle-part.green {
+  background: var(--green);
+}
+
+.cycle-part.green + .cycle-part.amber + .cycle-part.green {
+  filter: hue-rotate(-40deg) saturate(0.8);
+}
+
+.cycle-part.amber {
+  background: var(--amber);
+  font-size: 0.7rem;
+}
+
+.cycle-part.selected::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 3px solid #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 2px rgb(31 41 55 / 45%);
+}
+
+.cycle-part:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.offset-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.link-toggle,
+.offset-btn {
+  min-height: 44px;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border);
+  background: rgb(255 255 255 / 80%);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.link-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.link-toggle.linked,
+.offset-btn.selected {
+  border-color: var(--accent);
+  background: rgb(37 99 235 / 14%);
+  color: var(--accent);
+}
+
+.link-toggle:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.btn-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-icon.done {
+  background: rgb(22 163 74 / 15%);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.part-editor {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: rgb(31 41 55 / 6%);
 }
 
 .slider:disabled {

@@ -17,12 +17,12 @@
     "menu": "Menu",
     "mute": "Geluid aan/uit",
     "backToEditor": "Terug naar editor",
-    "restart": "Herstart"
+    "restart": "Herstart",
+    "level": "Level"
   },
   "panel": {
     "title": "Kruispunt {{id}}",
     "close": "Sluiten",
-    "green": "Groen {{group}}",
     "group": {
       "A": "noord-zuid",
       "B": "oost-west"
@@ -32,7 +32,18 @@
     "locked": "Zet op pauze om de instellingen aan te passen.",
     "seconds": "s",
     "changed": "Instellingen gewijzigd: druk op Herstart om vanaf 0:00 met de nieuwe instellingen te rijden.",
-    "over": "Reset om de instellingen aan te passen."
+    "over": "Reset om de instellingen aan te passen.",
+    "now": "nu",
+    "cycle": "cyclus",
+    "greenPart": "Groen {{arrow}} {{name}}",
+    "amberPart": "Oranje na {{arrow}} {{name}}",
+    "offsetShort": "Offset",
+    "linked": "gekoppeld",
+    "unlinked": "los",
+    "linkedFixed": "Symmetrisch kruispunt: de koppeling staat vast in dit level",
+    "linkedFixedShort": "vast gekoppeld",
+    "copy": "Instellingen kopiëren",
+    "paste": "Instellingen plakken"
   },
   "result": {
     "title": "Alle auto's zijn weg!",
@@ -89,8 +100,8 @@
     "strict": "strikt (game-over)",
     "intersections": "Kruispunten",
     "noIntersections": "Nog geen kruispunten.",
-    "greenA": "Groen N-Z",
-    "greenB": "Groen O-W",
+    "greenA": "Groen ↕",
+    "greenB": "Groen ↔",
     "offset": "Offset",
     "spawnPoints": "Spawnpunten",
     "noSpawnPoints": "Nog geen spawnpunten.",
@@ -116,7 +127,7 @@
     "deceleration": "Deceleratie (m/s²)",
     "minGap": "Volgafstand (m)",
     "constants": "Constantes",
-    "clearance": "Ontruimingstijd (s)",
+    "clearance": "Standaard oranjetijd (s)",
     "reaction": "Reactietijd (s)",
     "greenRange": "Groenduur min / max / stap",
     "offsetRange": "Offset min / max / stap",
@@ -142,6 +153,10 @@
     "gridHeight": "Hoogte (tegels)",
     "gridHint": "3 tot 40 tegels; 1 tegel = 8 m. Later aan te passen onder 'Level'.",
     "cloneStandard": "Standaardlevel kopiëren",
-    "clone": "Kopiëren"
+    "clone": "Kopiëren",
+    "amberA": "Oranje ↕",
+    "amberB": "Oranje ↔",
+    "symmetric": "Symmetrisch (koppeling vast)",
+    "amberRange": "Oranje min / max / stap"
   }
 }

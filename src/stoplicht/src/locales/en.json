@@ -17,12 +17,12 @@
     "menu": "Menu",
     "mute": "Toggle sound",
     "backToEditor": "Back to editor",
-    "restart": "Restart"
+    "restart": "Restart",
+    "level": "Level"
   },
   "panel": {
     "title": "Intersection {{id}}",
     "close": "Close",
-    "green": "Green {{group}}",
     "group": {
       "A": "north-south",
       "B": "east-west"
@@ -32,7 +32,18 @@
     "locked": "Pause to adjust the settings.",
     "seconds": "s",
     "changed": "Settings changed: press Restart to run from 0:00 with the new settings.",
-    "over": "Reset to adjust the settings."
+    "over": "Reset to adjust the settings.",
+    "now": "now",
+    "cycle": "cycle",
+    "greenPart": "Green {{arrow}} {{name}}",
+    "amberPart": "Amber after {{arrow}} {{name}}",
+    "offsetShort": "Offset",
+    "linked": "linked",
+    "unlinked": "separate",
+    "linkedFixed": "Symmetric junction: the coupling is fixed in this level",
+    "linkedFixedShort": "fixed link",
+    "copy": "Copy settings",
+    "paste": "Paste settings"
   },
   "result": {
     "title": "All cars are gone!",
@@ -89,8 +100,8 @@
     "strict": "strict (game over)",
     "intersections": "Intersections",
     "noIntersections": "No intersections yet.",
-    "greenA": "Green N-S",
-    "greenB": "Green E-W",
+    "greenA": "Green ↕",
+    "greenB": "Green ↔",
     "offset": "Offset",
     "spawnPoints": "Spawn points",
     "noSpawnPoints": "No spawn points yet.",
@@ -116,7 +127,7 @@
     "deceleration": "Deceleration (m/s²)",
     "minGap": "Following gap (m)",
     "constants": "Constants",
-    "clearance": "Clearance time (s)",
+    "clearance": "Default amber time (s)",
     "reaction": "Reaction time (s)",
     "greenRange": "Green min / max / step",
     "offsetRange": "Offset min / max / step",
@@ -142,6 +153,10 @@
     "gridHeight": "Height (tiles)",
     "gridHint": "3 to 40 tiles; 1 tile = 8 m. Adjustable later under 'Level'.",
     "cloneStandard": "Copy standard level",
-    "clone": "Copy"
+    "clone": "Copy",
+    "amberA": "Amber ↕",
+    "amberB": "Amber ↔",
+    "symmetric": "Symmetric (coupling fixed)",
+    "amberRange": "Amber min / max / step"
   }
 }

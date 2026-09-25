@@ -36,6 +36,7 @@ De twintig standaardlevels komen uit één generator (layout, spawnreeksen, voer
 
     python3 scripts/generate-levels.py          # schrijft public/levels/level*.json + index.json (behoudt doeltijden)
     npx vite-node -c scripts/vite-node.config.ts scripts/tune-level.ts public/levels/level2.json 600 --apply
+    scripts/tune-all.sh [eerste] [laatste]      # alle levels achter elkaar, werkt daarna index.json bij
 
 De tuner zoekt goede lichtinstellingen (hill climbing met random restarts) en zet met `--apply` de doeltijd op
 ≈ beste gevonden tijd + 8%, altijd duidelijk onder wat de default-instellingen halen. Draai daarna de generator
@@ -65,4 +66,7 @@ Zet in de repo-instellingen *Pages → Source* op **GitHub Actions**. De build k
 - `spawnPoints`: op de maprand aan een wegeinde; `route` (waypoints) optioneel, standaard rechtdoor.
 - `spawns`: `{ time, spawnPoint, vehicleType }`, `vehicleTypes` met lengte/topsnelheid/(de)celeratie/volgafstand.
 - `constants`: ontruimingstijd, reactietijd, slider-bereiken, `lockedParams` voor tutorial-levels.
-- `defaultLightSettings`: per kruispunt `{ green: { A, B }, offset }`.
+- `defaultLightSettings`: per kruispunt `{ green: { A, B }, amber: { A, B }, offset, linked }`; `amber` valt terug op
+  `constants.clearanceTime`. Bereiken: groen 1–30 s, oranje 1–10 s (`amberRange`), offset −30..+30 s.
+- `intersections[].symmetric: true` houdt groen en oranje van beide richtingen gekoppeld (puzzelregel); anders kan de
+  speler ze met de paperclip-knop loskoppelen.
