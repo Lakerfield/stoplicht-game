@@ -35,7 +35,7 @@ jobs:
         working-directory: src/stoplicht
         # Project sites live under https://<user>.github.io/<repo>/ ; set BASE_PATH=/ when a custom domain (stoplicht.com) is used.
         env:
-          BASE_PATH: /${{ github.event.repository.name }}/
+          BASE_PATH: /
         run: npm run build
 
       - name: SPA fallback for deep links
