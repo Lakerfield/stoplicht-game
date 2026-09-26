@@ -66,7 +66,7 @@ export class GameScene extends Phaser.Scene {
 
   private dragStart: { x: number; y: number; scrollX: number; scrollY: number } | null = null;
   private dragging = false;
-  private pinchStart: { distance: number; zoom: number } | null = null;
+  private pinchStart: { distance: number; zoom: number; world: { x: number; y: number } } | null = null;
   private appliedFps = 0;
   private idleWake: ReturnType<typeof setTimeout> | null = null;
   private readonly prefs: PreferencesStore;
@@ -667,7 +667,7 @@ export class GameScene extends Phaser.Scene {
       // narrow screens: the bottom sheet covers the lower half, so show the junction in the upper part
       if (this.scale.width < 768) {
         const cam = this.cameras.main;
-        cam.pan(x, y + 0.2 * cam.displayHeight, 350, 'Sine.easeInOut');
+        cam.pan(x, y + 0.24 * cam.displayHeight, 350, 'Sine.easeInOut');
       }
     }
   }
@@ -746,7 +746,10 @@ export class GameScene extends Phaser.Scene {
       this.session.touch();
       const active = this.activePointers();
       if (active.length >= 2) {
-        this.pinchStart = { distance: pointerDistance(active[0], active[1]), zoom: cam.zoom };
+        const mid = { x: (active[0].x + active[1].x) / 2, y: (active[0].y + active[1].y) / 2 };
+        // remember the map point under the fingers: it follows the fingers while zooming (zoom + pan in one gesture)
+        const world = cam.getWorldPoint(mid.x, mid.y);
+        this.pinchStart = { distance: pointerDistance(active[0], active[1]), zoom: cam.zoom, world: { x: world.x, y: world.y } };
         this.dragStart = null;
         return;
       }
@@ -760,7 +763,11 @@ export class GameScene extends Phaser.Scene {
       if (this.pinchStart && active.length >= 2) {
         const d = pointerDistance(active[0], active[1]);
         const mid = { x: (active[0].x + active[1].x) / 2, y: (active[0].y + active[1].y) / 2 };
-        this.setZoom((this.pinchStart.zoom * d) / this.pinchStart.distance, mid.x, mid.y);
+        this.setZoom((this.pinchStart.zoom * d) / this.pinchStart.distance);
+        // pan so the remembered map point sits under the current midpoint of the fingers
+        const under = cam.getWorldPoint(mid.x, mid.y);
+        cam.scrollX += this.pinchStart.world.x - under.x;
+        cam.scrollY += this.pinchStart.world.y - under.y;
         return;
       }
       if (!this.dragStart || !p.isDown) return;
