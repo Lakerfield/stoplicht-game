@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level11",
  "name": "Dubbele bocht",
+ "nameEn": "Double bend",
  "grid": {
   "width": 17,
   "height": 13

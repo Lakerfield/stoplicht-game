@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level9",
  "name": "Motorclub",
+ "nameEn": "Motor club",
  "grid": {
   "width": 13,
   "height": 9

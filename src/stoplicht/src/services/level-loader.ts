@@ -4,6 +4,14 @@ export interface LevelManifestEntry {
   id: string;
   file: string;
   name: string;
+  nameEn?: string;
+  targetTime?: number;
+  collisionMode?: 'mild' | 'strict';
+}
+
+/** Level name in the given locale; English falls back to the Dutch name. */
+export function levelName(level: { name: string; nameEn?: string }, locale: string): string {
+  return locale.startsWith('en') && level.nameEn ? level.nameEn : level.name;
 }
 
 export interface LevelManifest {

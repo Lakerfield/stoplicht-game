@@ -18,13 +18,20 @@ Zie `plan.md` voor de volledige eisenlijst.
 
 ## Schermen
 
-- **Hoofdmenu** (`/`): levellijst met ontgrendeling (doel van level N halen ontgrendelt N+1), taal NL/EN, geluid.
+- **Hoofdmenu** (`/`): levellijst met ontgrendeling (doel van level N halen ontgrendelt N+1), taalkeuze NL/EN
+  (levelnamen komen mee via `nameEn` in het level en het manifest), geluid, framerate, installeren als app.
   Editor ontgrendelen: 7× shift-klik (desktop) of 7× tik (touch) op het versienummer; "editor verbergen" zet hem weer uit.
 - **Spelen** (`/play/:levelId`): HUD, kruispuntpaneel, resultaat/botsing, geluid via Web Audio (gesynthetiseerd).
+  Level 1 en 2 tonen een tutorialhint tot het kruispunt geopend wordt (teksten in `hints.*` van de vertalingen).
+  "⚡ Bereken" simuleert de run zonder animatie en toont direct de uitkomst (deterministisch identiek aan spelen).
+  Bij een botsing worden dader (rood) en aanrijder (oranje) gemarkeerd en wordt de oorzaak genoemd (file richting
+  kruispunt X, of wachten voor rood); resultaat en botsing tonen per kruispunt de gemiddelde wachttijd per auto, met het
+totaal (auto-seconden, kan de eindtijd overstijgen) en het aantal gepasseerde auto's.
 - **Editor** (`/editor`): wegen tekenen/wissen, richting cyclen, kruispunten en spawnpunten worden afgeleid.
   Klik op een spawnpunt (kaart, tijdlijnlabel of zijbalk) voor een popup met reeks-generator en de lijst van dat punt.
   Tijdlijn: klik op een lege plek voegt een auto toe (shift = vrachtwagen), stippen zijn versleepbaar, klik op een
-  stip opent bewerken/verwijderen. Verder geavanceerde fysica, level testen, JSON import/export, autosave in localStorage.
+  stip opent bewerken/verwijderen, shift-klik selecteert (ook via vinkjes in de popup) voor verwijderen in bulk.
+  Undo/redo met Ctrl/⌘+Z en Ctrl/⌘+Shift+Z of de knoppen in de werkbalk (elke opgeslagen wijziging is één stap). Verder geavanceerde fysica, level testen, JSON import/export, autosave in localStorage.
   Met de editor ontgrendeld (dev-modus) zijn alle levels direct speelbaar.
 
 Botsingen (strikte modus) worden geometrisch bepaald: twee voertuigen uit verschillende lichtgroepen botsen als hun
@@ -47,9 +54,25 @@ bepaalt alleen de tekenstijl; het gedrag volgt uit lengte, topsnelheid, accelera
 
 ## Energie en framerate
 
+Geluid (`src/services/audio-service.ts`, alles gesynthetiseerd): korte cues bij optrekken/remmen, crash en finish, plus
+een rustig loopend deuntje (pad met vier akkoorden en een pentatonische melodie, 76 bpm) dat alleen tijdens de run speelt
+en in- en uitfadet. Muziek en effecten hebben eigen volumesliders in het menu; de mute-knop dempt alles.
+
+Rendering: éénrichtingswegen worden 5 m breed getekend (tweerichting 8 m); kruispuntvakken volgen de breedte per as.
+Verkeerslichten staan alleen op de zijden waar verkeer een kruispunt kan binnenrijden (`approachToGroup` in het netwerk).
+
 Bij stilstand (voor de start, pauze, resultaat, botsing) slaapt de Phaser-renderlus en wordt hij 5× per seconde
 gewekt voor één frame; elke aanraking van de kaart of instelling wekt hem direct en houdt 1,5 s vol tempo aan.
 Tijdens de run geldt de menukeuze **fps**: auto (30 op touch-apparaten, 60 op desktop), 30, 60 of max.
+
+## PWA
+
+`vite-plugin-pwa` maakt een manifest en een service worker (autoUpdate) die de app inclusief alle levels en iconen
+offline beschikbaar maakt. In het menu verschijnt "Installeren als app" zodra de browser dat aanbiedt (Chrome/Edge/
+Android); op iOS toont de knop de instructie voor "Zet op beginscherm". Iconen staan in `public/icons/` (bron: `icon.svg`).
+De service worker draait ook op de dev-server (`devOptions.enabled`). De installatieknop staat altijd in het menu; zonder
+browser-prompt (iOS, http over LAN, andere browsers) toont hij de passende instructie. Chrome/Edge bieden de prompt alleen
+over https of localhost, dus op een telefoon werkt installeren pas na de deploy op stoplicht.com.
 
 ## Deploy naar GitHub Pages
 

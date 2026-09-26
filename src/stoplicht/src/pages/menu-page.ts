@@ -4,8 +4,9 @@ import { resolve } from 'aurelia';
 import pkg from '../../package.json';
 import { cloneLevel } from './editor-page';
 import { AudioService } from '../services/audio-service';
+import { InstallService } from '../services/install-service';
 import { EditorStore } from '../services/editor-store';
-import { LevelLoader, type LevelManifestEntry } from '../services/level-loader';
+import { LevelLoader, levelName, type LevelManifestEntry } from '../services/level-loader';
 import { FPS_MODES, PreferencesStore, type FpsMode, type Locale } from '../services/preferences-store';
 import { ProgressStore } from '../services/progress-store';
 
@@ -13,6 +14,8 @@ interface LevelRow extends LevelManifestEntry {
   unlocked: boolean;
   achieved: boolean;
   best: number | null;
+  /** name in the active language */
+  displayName: string;
 }
 
 const UNLOCK_TAPS = 7;
@@ -26,6 +29,9 @@ export class MenuPage {
   private readonly router = resolve(IRouter);
   private readonly editorStore = resolve(EditorStore);
   readonly audio = resolve(AudioService);
+  readonly install = resolve(InstallService);
+  /** which install instruction is shown when the browser offers no prompt */
+  installHint: 'ios' | 'insecure' | 'manual' | null = null;
 
   readonly version = pkg.version;
   levels: LevelRow[] = [];
@@ -44,7 +50,7 @@ export class MenuPage {
       const ids = manifest.levels.map(l => l.id);
       this.levels = manifest.levels.map(entry => {
         const p = this.progress.get(entry.id);
-        return { ...entry, unlocked: this.editorUnlocked || this.progress.isUnlocked(ids, entry.id), achieved: p?.achieved ?? false, best: p?.bestTime ?? null };
+        return { ...entry, unlocked: this.editorUnlocked || this.progress.isUnlocked(ids, entry.id), achieved: p?.achieved ?? false, best: p?.bestTime ?? null, displayName: levelName(entry, this.locale) };
       });
     } catch (e) {
       this.error = e instanceof Error ? e.message : String(e);
@@ -58,6 +64,17 @@ export class MenuPage {
 
   openEditor(): void {
     void this.router.load('editor');
+  }
+
+  /** Install as app: native prompt where available, otherwise the iOS instructions. */
+  async installApp(): Promise<void> {
+    if (this.install.canPrompt) {
+      const outcome = await this.install.prompt();
+      if (outcome === 'accepted') this.showToast(this.i18n.tr('menu.installed'));
+      return;
+    }
+    const next = this.install.isIos ? 'ios' : !this.install.secure ? 'insecure' : 'manual';
+    this.installHint = this.installHint === next ? null : next;
   }
 
   /** Dev mode: copy a standard level into the editor and open it there. */
@@ -78,10 +95,12 @@ export class MenuPage {
     this.prefs.set('fpsMode', next);
   }
 
-  async toggleLocale(): Promise<void> {
-    this.locale = this.locale === 'nl' ? 'en' : 'nl';
-    this.prefs.set('locale', this.locale);
-    await this.i18n.setLocale(this.locale);
+  async setLocale(locale: Locale): Promise<void> {
+    if (locale === this.locale) return;
+    this.locale = locale;
+    this.prefs.set('locale', locale);
+    await this.i18n.setLocale(locale);
+    this.levels = this.levels.map(l => ({ ...l, displayName: levelName(l, locale) }));
   }
 
   /** Hidden editor unlock: 7 shift-clicks (desktop) or 7 taps (touch) on the version number. */

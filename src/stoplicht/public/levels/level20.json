@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level20",
  "name": "Grote finale",
+ "nameEn": "Grand finale",
  "grid": {
   "width": 23,
   "height": 17

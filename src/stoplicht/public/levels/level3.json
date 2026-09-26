@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level3",
  "name": "Eenrichting",
+ "nameEn": "One way",
  "grid": {
   "width": 15,
   "height": 11

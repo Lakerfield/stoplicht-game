@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level18",
  "name": "Stadshart",
+ "nameEn": "City centre",
  "grid": {
   "width": 21,
   "height": 15

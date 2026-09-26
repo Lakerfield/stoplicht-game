@@ -18,7 +18,9 @@
     "mute": "Geluid aan/uit",
     "backToEditor": "Terug naar editor",
     "restart": "Herstart",
-    "level": "Level"
+    "level": "Level",
+    "compute": "Bereken",
+    "computeHint": "Sla de animatie over: bereken de uitkomst van deze instellingen direct."
   },
   "panel": {
     "title": "Kruispunt {{id}}",
@@ -56,12 +58,20 @@
     "diff": "Verschil met record",
     "again": "Opnieuw",
     "next": "Volgend level",
-    "menu": "Menu"
+    "menu": "Menu",
+    "waits": "Wachttijd per kruispunt",
+    "perVehicle": "per auto",
+    "waitTotal": "{{total}} in totaal, {{vehicles}} auto's gepasseerd"
   },
   "crash": {
     "title": "Botsing!",
     "body": "Op kruispunt {{id}} reed kruisend verkeer een geblokkeerd kruisingsvlak op.",
-    "reset": "Reset en probeer opnieuw"
+    "reset": "Reset en probeer opnieuw",
+    "causeQueue": "De rode auto stond vast in een file richting kruispunt {{id}}.",
+    "causeQueueExit": "De rode auto stond vast achter een file.",
+    "causeLight": "De rode auto wachtte voor rood bij kruispunt {{id}} en stond nog op het kruisingsvlak.",
+    "causeUnknown": "De rode auto kwam niet weg van het kruisingsvlak.",
+    "marked": "De oranje auto reed er bij groen tegenaan; beide zijn op de kaart gemarkeerd."
   },
   "menu": {
     "tagline": "Stem de verkeerslichten af en laat alle auto's zo snel mogelijk de stad uit.",
@@ -80,7 +90,14 @@
       "30": "30",
       "60": "60",
       "max": "max"
-    }
+    },
+    "install": "Installeren als app",
+    "installed": "Geïnstalleerd",
+    "iosHint": "Op iPhone/iPad: tik in Safari op Delen (het vierkant met de pijl) en kies 'Zet op beginscherm'. Daarna opent Stoplicht schermvullend, ook zonder verbinding.",
+    "insecureHint": "Installeren als app kan alleen via een beveiligde verbinding (https). Open stoplicht.com in Chrome of Edge en kies dan 'Installeren'.",
+    "manualHint": "Deze browser biedt geen installatieknop aan. In Chrome of Edge: open het browsermenu (⋮) en kies 'App installeren' of 'Toevoegen aan startscherm'.",
+    "music": "Muziek",
+    "sfx": "Geluidseffecten"
   },
   "editor": {
     "title": "Level-editor",
@@ -151,7 +168,7 @@
     "clearPoint": "Alles van dit punt wissen",
     "perPoint": "Per spawnpunt (klik voor de lijst)",
     "noSpawnsHere": "Nog geen spawns op dit punt. Voeg een reeks toe of klik in de tijdlijn.",
-    "timelineHint": "Klik op een lege plek in een rij om een auto toe te voegen (shift = vrachtwagen), sleep een stip om de tijd te verschuiven, klik op een stip om te bewerken. Klik op een label of spawnpunt op de kaart voor de volledige lijst.",
+    "timelineHint": "Klik op een lege plek in een rij om een auto toe te voegen (shift = vrachtwagen), sleep een stip om de tijd te verschuiven, klik op een stip om te bewerken, shift-klik om te selecteren. Klik op een label of spawnpunt op de kaart voor de volledige lijst. Ctrl/⌘+Z maakt ongedaan.",
     "exportFirst": "Eerst exporteren (JSON)",
     "cancel": "Annuleren",
     "newLevel": "Nieuw level",
@@ -165,6 +182,21 @@
     "amberA": "Oranje ↕",
     "amberB": "Oranje ↔",
     "symmetric": "Symmetrisch (koppeling vast)",
-    "amberRange": "Oranje min / max / stap"
+    "amberRange": "Oranje min / max / stap",
+    "undo": "Ongedaan maken",
+    "redo": "Opnieuw",
+    "selected": "{{count}} geselecteerd",
+    "deleteSelected": "Verwijder geselecteerde",
+    "deselect": "Deselecteren",
+    "selectAll": "Selecteer alles van dit punt",
+    "nameEn": "Naam (Engels)"
+  },
+  "play": {
+    "noEditorLevel": "Er staat geen level in de editor om te testen.",
+    "unknownLevel": "Level '{{id}}' bestaat niet."
+  },
+  "hints": {
+    "level1": "Tik op het kruispunt. Van noord en zuid komen veel meer auto's dan van oost en west: geef ↕ meer groen dan ↔ en druk op Start, of op ⚡ Bereken voor de uitkomst zonder te wachten.",
+    "level2": "Twee kruispunten en een stroom auto's van west naar oost. Stel bij kruispunt B de Offset zo in dat het groen net iets later begint dan bij A: een groene golf. Kopiëren en plakken (⧉) scheelt werk."
   }
 }

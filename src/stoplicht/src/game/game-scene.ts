@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
 import type { GameSession } from '../services/game-session';
 import { PreferencesStore } from '../services/preferences-store';
-import { OPPOSITE, rightOf, SIDE_DIR, SIDES, TILE_SIZE, vehicleKindOf, type IntersectionInfo, type LightColor, type TileInfo, type Vehicle } from '../sim';
+import { OPPOSITE, rightOf, SIDE_DIR, SIDES, TILE_SIZE, vehicleKindOf, type IntersectionInfo, type LightColor, type Side, type TileInfo, type Vehicle } from '../sim';
 import { THEME } from './theme';
 
 /** render scale: pixels per metre (1 tile = 8 m = 64 px at zoom 1) */
 export const PX_PER_M = 8;
+/** drawn width of a one-way road (m); two-way roads fill the whole tile */
+const ONE_WAY_ROAD_WIDTH = 5;
 const TILE_PX = TILE_SIZE * PX_PER_M;
 /** pointer movement below this (screen px) counts as a tap, above as a drag */
 const DRAG_THRESHOLD = 10;
@@ -89,6 +91,23 @@ export class GameScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, () => {
       this.wakeNow();
       this.fitCamera(false);
+    });
+    // rotation on phones reports the final size late: re-check a few times and keep rendering meanwhile
+    const onOrientation = (): void => {
+      this.wakeNow();
+      for (const ms of [0, 150, 400, 900]) {
+        setTimeout(() => {
+          if (!this.sys.isActive()) return;
+          this.session.touch();
+          this.syncCanvasSize();
+        }, ms);
+      }
+    };
+    window.addEventListener('orientationchange', onOrientation);
+    window.addEventListener('resize', onOrientation);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      window.removeEventListener('orientationchange', onOrientation);
+      window.removeEventListener('resize', onOrientation);
     });
     // Phaser's own listeners only run inside a step, so wake on raw DOM input while the loop sleeps
     const canvas = this.game.canvas;
@@ -223,6 +242,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     if (this.idleWake) return;
+    // idle frames carry almost no delta, so Phaser's periodic parent-size check never fires: do it here
+    this.syncCanvasSize();
     // this frame still renders; afterwards the loop sleeps until the timer wakes it for the next idle frame
     loop.sleep();
     this.idleWake = setTimeout(() => {
@@ -230,6 +251,20 @@ export class GameScene extends Phaser.Scene {
       if (!this.sys.isActive()) return;
       loop.wake(true);
     }, 1000 / IDLE_FPS);
+  }
+
+  /**
+   * Makes the game size follow the host element. Phaser only refreshes when its cached parent size
+   * changes, which can leave the canvas stale after a rotation; compare against the actual game size instead.
+   */
+  private syncCanvasSize(): void {
+    const scale = this.scale;
+    scale.getParentBounds();
+    const w = Math.floor(scale.parentSize.width);
+    const h = Math.floor(scale.parentSize.height);
+    if (w > 0 && h > 0 && (Math.floor(scale.gameSize.width) !== w || Math.floor(scale.gameSize.height) !== h)) {
+      scale.refresh();
+    }
   }
 
   /** Any DOM interaction while asleep must wake the loop immediately (pan, tap, wheel). */
@@ -259,11 +294,7 @@ export class GameScene extends Phaser.Scene {
     for (let x = 0; x <= level.grid.width; x++) g.lineBetween(x * TILE_PX, 0, x * TILE_PX, h);
     for (let y = 0; y <= level.grid.height; y++) g.lineBetween(0, y * TILE_PX, w, y * TILE_PX);
 
-    for (const tile of network.tiles.values()) {
-      const isJunction = tile.neighbors.length >= 3;
-      g.fillStyle(isJunction ? THEME.intersection : THEME.asphalt, 1);
-      g.fillRect(tile.x * TILE_PX, tile.y * TILE_PX, TILE_PX, TILE_PX);
-    }
+    for (const tile of network.tiles.values()) this.drawTileAsphalt(tile);
     for (const tile of network.tiles.values()) this.drawTileMarkings(tile);
     this.drawDecorations();
 
@@ -276,6 +307,8 @@ export class GameScene extends Phaser.Scene {
     this.crashShown = false;
     this.crashMarker.setVisible(false);
     this.fitCamera(true);
+    // lets tests (and debugging) know which level is drawn and fitted
+    this.game.canvas.dataset.level = level.id;
   }
 
   /**
@@ -380,6 +413,34 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** road width (px) of the segment leaving `tile` towards `side` */
+  private roadWidthPx(tile: TileInfo, side: Side): number {
+    const seg = this.session.network!.segmentForStep(tile, side);
+    return (seg?.oneWay ? ONE_WAY_ROAD_WIDTH : TILE_SIZE) * PX_PER_M;
+  }
+
+  /**
+   * Asphalt as a band per connected side (half a tile long, as wide as that road) plus a centre square:
+   * straight roads, bends and junctions all come out right, and one-way roads are narrower.
+   */
+  private drawTileAsphalt(tile: TileInfo): void {
+    const g = this.mapLayer;
+    const cx = (tile.x + 0.5) * TILE_PX;
+    const cy = (tile.y + 0.5) * TILE_PX;
+    const half = TILE_PX / 2;
+    const isJunction = tile.neighbors.length >= 3;
+    g.fillStyle(isJunction ? THEME.intersection : THEME.asphalt, 1);
+    let maxW = 0;
+    for (const side of tile.neighbors) {
+      const w = this.roadWidthPx(tile, side);
+      maxW = Math.max(maxW, w);
+      const d = SIDE_DIR[side];
+      if (d.x !== 0) g.fillRect(d.x > 0 ? cx : cx - half, cy - w / 2, half, w);
+      else g.fillRect(cx - w / 2, d.y > 0 ? cy : cy - half, w, half);
+    }
+    g.fillRect(cx - maxW / 2, cy - maxW / 2, maxW, maxW);
+  }
+
   private drawTileMarkings(tile: TileInfo): void {
     const g = this.mapLayer;
     const network = this.session.network!;
@@ -393,13 +454,14 @@ export class GameScene extends Phaser.Scene {
       const axisSide = tile.neighbors[0];
       const horizontal = axisSide === 'E' || axisSide === 'W';
       const seg = network.segmentForStep(tile, axisSide)!;
+      const w = this.roadWidthPx(tile, axisSide);
       g.lineStyle(2, THEME.edgeLine, 0.9);
       if (horizontal) {
-        g.lineBetween(cx - half, cy - half + 2, cx + half, cy - half + 2);
-        g.lineBetween(cx - half, cy + half - 2, cx + half, cy + half - 2);
+        g.lineBetween(cx - half, cy - w / 2 + 2, cx + half, cy - w / 2 + 2);
+        g.lineBetween(cx - half, cy + w / 2 - 2, cx + half, cy + w / 2 - 2);
       } else {
-        g.lineBetween(cx - half + 2, cy - half, cx - half + 2, cy + half);
-        g.lineBetween(cx + half - 2, cy - half, cx + half - 2, cy + half);
+        g.lineBetween(cx - w / 2 + 2, cy - half, cx - w / 2 + 2, cy + half);
+        g.lineBetween(cx + w / 2 - 2, cy - half, cx + w / 2 - 2, cy + half);
       }
       if (!seg.oneWay) {
         // dashed centre line: 2 m dash, 2 m gap
@@ -413,24 +475,27 @@ export class GameScene extends Phaser.Scene {
       } else {
         // one-way arrow in the direction of travel
         const dir = SIDE_DIR[network.stepAllowed(seg, axisSide) ? axisSide : OPPOSITE[axisSide]];
-        this.drawArrow(cx, cy, dir.x, dir.y, 1.6 * PX_PER_M, THEME.laneLine);
+        this.drawArrow(cx, cy, dir.x, dir.y, 1.4 * PX_PER_M, THEME.laneLine);
       }
       if (tile.neighbors.length === 1 && network.isEdge(tile.x, tile.y)) {
-        // map edge: mark the entry/exit
+        // map edge: mark the entry/exit across the road
         g.lineStyle(3, THEME.edgeArrow, 0.8);
         const d = SIDE_DIR[OPPOSITE[axisSide]];
-        g.lineBetween(cx + d.x * half - d.y * half, cy + d.y * half - d.x * half, cx + d.x * half + d.y * half, cy + d.y * half + d.x * half);
+        g.lineBetween(cx + d.x * half - d.y * (w / 2), cy + d.y * half - d.x * (w / 2), cx + d.x * half + d.y * (w / 2), cy + d.y * half + d.x * (w / 2));
       }
     } else if (tile.neighbors.length === 2) {
-      // bend: outer edge lines only
+      // bend: edge lines of each band from the tile edge up to the centre square
       g.lineStyle(2, THEME.edgeLine, 0.9);
-      for (const side of SIDES) {
-        if (tile.neighbors.includes(side)) continue;
+      const maxW = Math.max(...tile.neighbors.map(n => this.roadWidthPx(tile, n)));
+      for (const side of tile.neighbors) {
+        const w = this.roadWidthPx(tile, side);
         const d = SIDE_DIR[side];
         const inset = 2;
-        const px = cx + d.x * (half - inset);
-        const py = cy + d.y * (half - inset);
-        g.lineBetween(px - d.y * half, py - d.x * half, px + d.y * half, py + d.x * half);
+        for (const sgn of [-1, 1]) {
+          const ox = d.y * sgn * (w / 2 - inset);
+          const oy = d.x * sgn * (w / 2 - inset);
+          g.lineBetween(cx + ox + d.x * (maxW / 2), cy + oy + d.y * (maxW / 2), cx + ox + d.x * half, cy + oy + d.y * half);
+        }
       }
     }
   }
@@ -458,11 +523,11 @@ export class GameScene extends Phaser.Scene {
       const travel = SIDE_DIR[OPPOSITE[approach]]; // vehicles from this approach travel away from it
       const right = rightOf(travel);
       const laneOffset = seg.oneWay ? 0 : 2;
-      const laneHalfWidth = seg.oneWay ? 3.5 : 2;
+      const laneHalfWidth = seg.oneWay ? ONE_WAY_ROAD_WIDTH / 2 - 0.3 : 2;
       const back = 0.5; // stop line offset before the tile edge (m)
       const cx = info.center.x - travel.x * (TILE_SIZE / 2 + back) + right.x * laneOffset;
       const cy = info.center.y - travel.y * (TILE_SIZE / 2 + back) + right.y * laneOffset;
-      const lampDist = seg.oneWay ? 6.2 : 4.2 + laneOffset;
+      const lampDist = seg.oneWay ? ONE_WAY_ROAD_WIDTH / 2 + 1.8 : 4.2 + laneOffset;
       const lampBack = TILE_SIZE / 2 + 3.4; // housing sits a little before the stop line, on the pavement
       this.signalGeometry.push({
         intersectionIndex: index,
@@ -689,6 +754,16 @@ export class GameScene extends Phaser.Scene {
     const x = info.center.x * PX_PER_M;
     const y = info.center.y * PX_PER_M;
     this.crashMarker.setPosition(x, y).setAlpha(0.6).setVisible(true);
+    // ring the two vehicles involved: the blocker in red, the one that hit it in amber
+    for (const id of collision.vehicleIds) {
+      const view = this.vehicleViews.get(id);
+      if (!view) continue;
+      const color = id === collision.blockerId ? THEME.red : THEME.amber;
+      const ring = this.add.circle(0, 0, 26).setStrokeStyle(4, color, 0.95);
+      const glow = this.add.circle(0, 0, 34).setStrokeStyle(3, color, 0.35);
+      view.container.add([ring, glow]);
+      this.tweens.add({ targets: [ring, glow], scale: { from: 0.9, to: 1.15 }, duration: 600, yoyo: true, repeat: -1 });
+    }
     this.tweens.add({ targets: this.crashMarker, alpha: { from: 0.7, to: 0.2 }, duration: 500, yoyo: true, repeat: -1 });
     this.cameras.main.shake(350, 0.012);
     this.cameras.main.pan(x, y, 500, 'Sine.easeInOut');

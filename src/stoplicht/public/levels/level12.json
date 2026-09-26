@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level12",
  "name": "Boulevard",
+ "nameEn": "Boulevard",
  "grid": {
   "width": 21,
   "height": 9

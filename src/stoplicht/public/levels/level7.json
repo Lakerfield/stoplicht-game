@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level7",
  "name": "Buslijn",
+ "nameEn": "Bus line",
  "grid": {
   "width": 15,
   "height": 9

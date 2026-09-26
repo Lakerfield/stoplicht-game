@@ -10,10 +10,14 @@ export interface Preferences {
   muted: boolean;
   editorUnlocked: boolean;
   fpsMode: FpsMode;
+  /** 0..1 */
+  musicVolume: number;
+  /** 0..1 */
+  sfxVolume: number;
 }
 
 const KEY = 'preferences';
-const DEFAULTS: Preferences = { locale: 'nl', muted: false, editorUnlocked: false, fpsMode: 'auto' };
+const DEFAULTS: Preferences = { locale: 'nl', muted: false, editorUnlocked: false, fpsMode: 'auto', musicVolume: 0.5, sfxVolume: 0.7 };
 
 export class PreferencesStore {
   private data: Preferences;

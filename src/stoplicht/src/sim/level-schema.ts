@@ -104,7 +104,10 @@ export type CollisionMode = 'strict' | 'mild';
 export interface LevelData {
   formatVersion: number;
   id: string;
+  /** Dutch name (the game's primary language) */
   name: string;
+  /** English name; falls back to `name` */
+  nameEn?: string;
   grid: { width: number; height: number };
   roads: RoadSegmentDef[];
   intersections?: IntersectionDef[];

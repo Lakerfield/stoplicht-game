@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level16",
  "name": "Sluiproute",
+ "nameEn": "Shortcut",
  "grid": {
   "width": 17,
   "height": 11

@@ -5,9 +5,9 @@ import { PreferencesStore } from './services/preferences-store';
 
 @route({
   routes: [
-    { path: '', component: import('./pages/menu-page'), title: 'Stoplicht' },
-    { path: 'play/:levelId', component: import('./pages/play-page'), title: 'Stoplicht', transitionPlan: 'replace' },
-    { path: 'editor', component: import('./pages/editor-page'), title: 'Stoplicht – editor' },
+    { path: '', component: import('./pages/menu-page'), title: 'Stoplicht · stoplicht.com' },
+    { path: 'play/:levelId', component: import('./pages/play-page'), title: 'Stoplicht · spelen', transitionPlan: 'replace' },
+    { path: 'editor', component: import('./pages/editor-page'), title: 'Stoplicht · editor' },
   ],
 })
 export class MyApp {

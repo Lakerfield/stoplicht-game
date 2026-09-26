@@ -12,6 +12,9 @@
     <section class="editor-canvas">
       <div class="toolbar">
         <button repeat.for="tl of tools" type="button" class="btn" active.class="tool === tl.id" click.trigger="tool = tl.id" title="${tl.label | t}">${tl.icon} <span class="hidden sm:inline">${tl.label | t}</span></button>
+        <span class="grow"></span>
+        <button type="button" class="btn btn-icon" click.trigger="undo()" disabled.bind="!canUndo" title="${'editor.undo' | t} (Ctrl/⌘+Z)" aria-label="${'editor.undo' | t}">↶</button>
+        <button type="button" class="btn btn-icon" click.trigger="redo()" disabled.bind="!canRedo" title="${'editor.redo' | t} (Ctrl/⌘+Shift+Z)" aria-label="${'editor.redo' | t}">↷</button>
       </div>
       <p class="text-xs opacity-70 mb-2">${'editor.hint.' + tool | t}</p>
 
@@ -50,10 +53,16 @@
             <text class="timeline-label" x="2" y.attr="row.y + 4" font-size="11" font-weight="700" fill="#2563eb" pointerdown.trigger="openSpawnPoint(row.id, $event)">${row.id}</text>
             <line x1="40" y1.attr="row.y" x2="980" y2.attr="row.y" stroke="#c9d2bd" pointer-events="none"></line>
             <rect repeat.for="it of row.items" class="timeline-dot" x.attr="it.x - (it.truck ? 6 : 4)" y.attr="row.y - (it.truck ? 6 : 4)" width.attr="it.truck ? 12 : 8" height.attr="it.truck ? 12 : 8" rx="1.5"
-              fill.attr="it.truck ? '#475569' : '#2563eb'" pointerdown.trigger="onDotDown(it.spawn, $event)"></rect>
+              fill.attr="isSpawnSelected(it.spawn) ? '#dc2626' : (it.truck ? '#475569' : '#2563eb')" stroke.attr="isSpawnSelected(it.spawn) ? '#1f2937' : 'none'" stroke-width="1.5"
+              pointerdown.trigger="onDotDown(it.spawn, $event)"></rect>
           </g>
         </svg>
         <p class="text-xs opacity-70 mt-1">${'editor.timelineHint' | t}</p>
+        <div class="selection-bar" if.bind="selectionCount">
+          <span>${'editor.selected' | t: { count: selectionCount }}</span>
+          <button type="button" class="btn btn-danger" click.trigger="deleteSelected()">🗑 ${'editor.deleteSelected' | t}</button>
+          <button type="button" class="btn" click.trigger="clearSelection()">${'editor.deselect' | t}</button>
+        </div>
       </div>
     </section>
 
@@ -69,6 +78,7 @@
         <div class="form-grid">
           <label>${'editor.id' | t}<input type="text" value.bind="level.id" change.trigger="changed()"></label>
           <label>${'editor.name' | t}<input type="text" value.bind="level.name" change.trigger="changed()"></label>
+          <label>${'editor.nameEn' | t}<input type="text" value.bind="level.nameEn" change.trigger="changed()"></label>
           <label>${'editor.grid' | t}
             <span class="flex gap-1">
               <input type="number" min="3" max="40" value.bind="level.grid.width | num" change.trigger="resizeGrid()">
@@ -198,11 +208,16 @@
         <button type="button" class="btn" click.trigger="addSingleSpawn()">+ ${'editor.addOne' | t}</button>
         <button type="button" class="btn" click.trigger="clearSpawnsFor(spawnPointDialog)" if.bind="dialogSpawns.length">${'editor.clearPoint' | t}</button>
       </div>
+      <div class="flex gap-2 flex-wrap mt-3 items-center" if.bind="dialogSpawns.length">
+        <button type="button" class="btn small-btn" click.trigger="selectAllOf(spawnPointDialog)">${'editor.selectAll' | t}</button>
+        <button type="button" class="btn small-btn" click.trigger="clearSelection()" if.bind="selectionCount">${'editor.deselect' | t}</button>
+        <button type="button" class="btn small-btn btn-danger" click.trigger="deleteSelected()" if.bind="selectionCount">🗑 ${'editor.deleteSelected' | t} (${selectionCount})</button>
+      </div>
       <table class="spawn-table" if.bind="dialogSpawns.length">
-        <thead><tr><th>#</th><th>${'editor.time' | t}</th><th>${'editor.type' | t}</th><th></th></tr></thead>
+        <thead><tr><th></th><th>${'editor.time' | t}</th><th>${'editor.type' | t}</th><th></th></tr></thead>
         <tbody>
           <tr repeat.for="s of dialogSpawns">
-            <td class="opacity-60">${$index + 1}</td>
+            <td><input type="checkbox" class="spawn-check" checked.bind="isSpawnSelected(s)" change.trigger="toggleSpawnSelected(s, $event)" aria-label="${$index + 1}"></td>
             <td><input type="number" min="0" step="0.1" value.bind="s.time | num" change.trigger="sortSpawns()"></td>
             <td><select value.bind="s.vehicleType" change.trigger="changed()"><option repeat.for="id of vehicleTypeIds" value.bind="id">${id}</option></select></td>
             <td><button type="button" class="btn btn-icon" click.trigger="removeSpawnObject(s)" aria-label="${'editor.delete' | t}">✕</button></td>

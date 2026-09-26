@@ -188,8 +188,13 @@ export class RoadNetwork {
       const key = tileKey(tile.x, tile.y);
       const def = defs.get(key);
       const id = def?.id ?? `x${tile.x}y${tile.y}`;
+      // an approach needs a road on that side over which traffic can actually enter the junction
+      const entering = (side: Side): boolean => {
+        const seg = this.segmentForStep(tile, side);
+        return seg !== undefined && (!seg.oneWay || segmentDirection(seg) === OPPOSITE[side]);
+      };
       const groups = (def?.lightGroups ?? DEFAULT_LIGHT_GROUPS)
-        .map(g => ({ id: g.id, approaches: g.approaches.filter(a => tile.neighbors.includes(a)) }))
+        .map(g => ({ id: g.id, approaches: g.approaches.filter(a => entering(a)) }))
         .filter(g => g.approaches.length > 0);
       const approachToGroup: Record<Side, string | undefined> = { N: undefined, E: undefined, S: undefined, W: undefined };
       for (const g of groups) for (const a of g.approaches) approachToGroup[a] = g.id;

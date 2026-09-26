@@ -11,6 +11,9 @@
   --amber: #f59e0b;
   --red: #dc2626;
   --shadow: 0 4px 16px rgb(31 41 55 / 12%);
+
+  /* height of the bottom control bar incl. its padding (single row on phones), plus a small gap */
+  --controls-height: 5.4rem;
 }
 
 html,
@@ -225,11 +228,17 @@ game-canvas canvas {
   border-radius: 1rem 1rem 0 0;
   box-shadow: var(--shadow);
   backdrop-filter: blur(8px);
-
-  /* room for the single-row control bar on narrow screens */
-  padding: 0.6rem 0.75rem max(4.6rem, calc(4rem + env(safe-area-inset-bottom)));
+  padding: 0.6rem 0.75rem 0.75rem;
   pointer-events: auto;
   z-index: 20;
+}
+
+/* narrow screens: the sheet ends where the control bar begins, so they can never overlap */
+@media (width < 768px) {
+  .panel {
+    bottom: calc(var(--controls-height) + env(safe-area-inset-bottom));
+    border-radius: 1rem 1rem 0 0;
+  }
 }
 
 @media (width >= 768px) {
@@ -433,6 +442,55 @@ game-canvas canvas {
   cursor: default;
 }
 
+.hint-bubble {
+  position: absolute;
+  left: 50%;
+  top: 5.2rem;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: min(32rem, calc(100% - 2rem));
+  padding: 0.6rem 0.5rem 0.6rem 0.9rem;
+  border-radius: 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.btn-compute {
+  border-color: rgb(245 158 11 / 60%);
+  background: rgb(245 158 11 / 12%);
+}
+
+.waits {
+  background: rgb(31 41 55 / 6%);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.wait-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 0.75rem;
+  font-size: 0.9rem;
+  padding: 0.15rem 0;
+}
+
+.wait-row small {
+  font-size: 0.7rem;
+  opacity: 0.65;
+}
+
+.wait-total {
+  grid-column: 1 / -1;
+  margin-top: -0.1rem;
+}
+
 .btn-icon svg {
   width: 20px;
   height: 20px;
@@ -604,6 +662,37 @@ game-canvas canvas {
   margin-top: auto;
 }
 
+.volume {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+}
+
+.volume input {
+  width: 5.5rem;
+  height: 44px;
+  accent-color: var(--accent);
+}
+
+.segmented {
+  display: inline-flex;
+}
+
+.seg-btn {
+  border-radius: 0;
+  min-width: 52px;
+}
+
+.seg-btn:first-child {
+  border-radius: 0.6rem 0 0 0.6rem;
+}
+
+.seg-btn:last-child {
+  border-radius: 0 0.6rem 0.6rem 0;
+  margin-left: -1px;
+}
+
 .link {
   background: none;
   border: none;
@@ -622,6 +711,25 @@ game-canvas canvas {
   min-height: 44px;
   min-width: 44px;
   cursor: default;
+}
+
+.site-link {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  width: fit-content;
+}
+
+.ios-hint {
+  font-size: 0.85rem;
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.75rem;
+  background: var(--card);
+  border: 1px solid var(--border);
 }
 
 .toast {
@@ -780,6 +888,30 @@ game-canvas canvas {
 
 .spawn-table td {
   padding: 0.15rem;
+}
+
+.selection-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.6rem;
+  background: rgb(220 38 38 / 8%);
+  border: 1px solid rgb(220 38 38 / 25%);
+  font-size: 0.9rem;
+}
+
+.small-btn {
+  min-height: 36px;
+  font-size: 0.85rem;
+}
+
+.spawn-check {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
 }
 
 .error-box {

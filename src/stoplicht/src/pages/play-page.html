@@ -6,7 +6,12 @@
   <game-canvas></game-canvas>
 
   <div if.bind="!session.level && !error" class="absolute inset-0 grid place-items-center text-lg">${'app.loading' | t}</div>
-  <div if.bind="error" class="absolute inset-0 grid place-items-center text-red-700 p-4 text-center">${error}</div>
+  <div if.bind="error" class="absolute inset-0 grid place-items-center p-4 text-center">
+    <div class="dialog">
+      <p class="text-red-700 mb-4">${error}</p>
+      <button type="button" class="btn btn-primary w-full" click.trigger="back()">${'result.menu' | t}</button>
+    </div>
+  </div>
 
   <template if.bind="session.level">
     <!-- HUD top: one low row, buttons left, time bar in the middle, counters right -->
@@ -27,6 +32,12 @@
       </div>
     </div>
 
+    <!-- tutorial hint (levels 1 and 2) -->
+    <div class="hint-bubble" if.bind="showHint">
+      <span>💡 ${hintKey | t}</span>
+      <button type="button" class="btn btn-icon" click.trigger="dismissHint()" aria-label="${'panel.close' | t}">✕</button>
+    </div>
+
     <!-- controls bottom -->
     <div class="hud-bottom">
       <div class="hud-card hud-controls flex items-center gap-2 justify-center">
@@ -37,6 +48,7 @@
         <div class="flex gap-1" role="group" aria-label="${'hud.speed' | t}">
           <button repeat.for="s of speeds" type="button" class="btn btn-speed" active.class="session.speed === s" click.trigger="session.setSpeed(s)">${s}×</button>
         </div>
+        <button type="button" class="btn btn-compute" click.trigger="session.computeResult()" title="${'hud.computeHint' | t}" aria-label="${'hud.compute' | t}">⚡<span class="hidden sm:inline"> ${'hud.compute' | t}</span></button>
       </div>
     </div>
 
@@ -58,6 +70,10 @@
           </template>
         </dl>
         <p class="text-amber-600 font-semibold mb-4" if.bind="session.result.isNewBest && session.result.previousBest !== null">★ ${'result.newBest' | t}</p>
+        <div class="waits" if.bind="topWaits.length">
+          <div class="text-xs uppercase tracking-wide opacity-60 mb-1">${'result.waits' | t}</div>
+          <div repeat.for="w of topWaits" class="wait-row"><span>${'panel.title' | t: { id: w.name }}</span><span class="font-mono tabular-nums">${w.average.toFixed(1)} s <small>${'result.perVehicle' | t}</small></span><small class="wait-total">${'result.waitTotal' | t: { total: w.totalText, vehicles: w.vehicles }}</small></div>
+        </div>
         <div class="flex flex-col gap-2">
           <button type="button" class="btn btn-primary w-full" if.bind="session.result.achieved && nextLevelId" click.trigger="next()">${'result.next' | t} →</button>
           <button type="button" class="btn w-full" active.class="!(session.result.achieved && nextLevelId)" click.trigger="session.reset()">↺ ${'result.again' | t}</button>
@@ -70,7 +86,12 @@
     <div class="overlay" if.bind="session.runState === 'crashed' && session.collision && session.crashDialogVisible">
       <div class="dialog border-red-300">
         <h2 class="text-2xl font-bold text-red-700 mb-2">💥 ${'crash.title' | t}</h2>
-        <p class="mb-4">${'crash.body' | t: { id: crashIntersectionName }}</p>
+        <p class="mb-2">${'crash.body' | t: { id: crashIntersectionName }}</p>
+        <p class="mb-3 text-sm">${crashCauseKey | t: { id: crashCauseIntersectionName }} ${'crash.marked' | t}</p>
+        <div class="waits mb-4" if.bind="crashWaits.length">
+          <div class="text-xs uppercase tracking-wide opacity-60 mb-1">${'result.waits' | t}</div>
+          <div repeat.for="w of crashWaits" class="wait-row"><span>${'panel.title' | t: { id: w.name }}</span><span class="font-mono tabular-nums">${w.average.toFixed(1)} s <small>${'result.perVehicle' | t}</small></span><small class="wait-total">${'result.waitTotal' | t: { total: w.totalText, vehicles: w.vehicles }}</small></div>
+        </div>
         <div class="flex flex-col gap-2">
           <button type="button" class="btn btn-primary w-full" click.trigger="session.reset()">↺ ${'crash.reset' | t}</button>
           <button type="button" class="btn w-full" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>

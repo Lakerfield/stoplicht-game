@@ -113,6 +113,11 @@ def junction_def(num, i, t):
     return d
 
 
+NAMES_EN = {1: "One junction", 2: "Green wave", 3: "One way", 4: "Blockade", 5: "The bend", 6: "The grid", 7: "Bus line",
+            8: "Harvest time", 9: "Motor club", 10: "Delivery service", 11: "Double bend", 12: "Boulevard", 13: "One-way grid",
+            14: "Tractors and buses", 15: "Rush hour", 16: "Shortcut", 17: "Country road", 18: "City centre", 19: "Night bus", 20: "Grand finale"}
+
+
 def level(num, name, grid, roads, spawns, mode):
     w, h = grid
     junctions, points = analyse(roads, w, h)
@@ -126,6 +131,7 @@ def level(num, name, grid, roads, spawns, mode):
         "formatVersion": 1,
         "id": f"level{num}",
         "name": name,
+        "nameEn": NAMES_EN.get(num, name),
         "grid": {"width": w, "height": h},
         "roads": roads,
         "intersections": [junction_def(num, i, t) for i, t in enumerate(junctions)],
@@ -151,9 +157,9 @@ L.append(level(2, "Groene golf", (15, 9), [hrow("h", 4, 15), vcol("v1", 4, 9), v
 # 3 — one-way verticals (≈40 s), first motorcycles and vans
 L.append(level(3, "Eenrichting", (15, 11), [hrow("h", 5, 15), vcol("v1", 4, 11, "S"), vcol("v2", 10, 11, "N")],
     series((0, 5), 0, 3.5, 38, (C, M, C, C, T)) + series((14, 5), 1.5, 4, 37.5, (C, C, M)) + series((4, 0), 0.5, 4.5, 40, (C, V, C, T)) + series((10, 10), 2, 5, 37, (C, C, V)), "mild"))
-# 4 — strict: two close junctions on a one-way avenue
+# 4 — strict: two close junctions on a one-way avenue (first strict level: kept light on purpose)
 L.append(level(4, "Blokkade", (13, 9), [hrow("h", 4, 13, "E"), vcol("v1", 5, 9), vcol("v2", 7, 9)],
-    series((0, 4), 0, 2, 40, (C, C, V, C, M, C, T)) + series((5, 0), 1, 6, 37) + series((5, 8), 4, 7, 39, (C, M)) + series((7, 0), 2.5, 6, 38.5) + series((7, 8), 5.5, 7, 40.5), "strict"))
+    series((0, 4), 0, 2.6, 36, (C, C, V, C, M, C)) + series((5, 0), 1, 8, 33) + series((5, 8), 4, 9, 31, (C, M)) + series((7, 0), 2.5, 8, 34.5) + series((7, 8), 5.5, 9, 32.5), "strict"))
 # 5 — a bend, three junctions
 L.append(level(5, "De bocht", (15, 11), [road("a", (0, 6), (8, 6)), road("b", (8, 6), (8, 0)), vcol("v", 3, 11), hrow("h2", 2, 15)],
     series((0, 6), 0, 2.5, 45, (C, C, M, C, V, T)) + series((8, 0), 1, 3, 46, (C, M, C)) + series((3, 0), 0.5, 3, 45.5, (C, C, C, V, T)) + series((3, 10), 2, 6, 44) + series((0, 2), 1.5, 5, 46.5, (C, V)) + series((14, 2), 3, 4, 47, (C, C, M, T)), "strict"))
@@ -213,5 +219,5 @@ for lvl in L:
             pass
     json.dump(lvl, open(path, "w"), ensure_ascii=False, indent=1)
     print(f"{lvl['id']:8} {lvl['name']:22} {lvl['grid']['width']}x{lvl['grid']['height']}  {len(lvl['intersections'])} junctions  {len(lvl['spawns'])} vehicles  {lvl['collisionMode']}")
-json.dump({"formatVersion": 1, "levels": [{"id": l["id"], "file": f"{l['id']}.json", "name": l["name"], "targetTime": l["targetTime"], "collisionMode": l["collisionMode"]} for l in L]},
+json.dump({"formatVersion": 1, "levels": [{"id": l["id"], "file": f"{l['id']}.json", "name": l["name"], "nameEn": l["nameEn"], "targetTime": l["targetTime"], "collisionMode": l["collisionMode"]} for l in L]},
           open("public/levels/index.json", "w"), ensure_ascii=False, indent=2)

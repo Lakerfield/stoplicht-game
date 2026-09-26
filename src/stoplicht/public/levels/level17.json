@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level17",
  "name": "Landweg",
+ "nameEn": "Country road",
  "grid": {
   "width": 15,
   "height": 9

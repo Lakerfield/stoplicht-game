@@ -20,12 +20,23 @@ export type RunState = 'idle' | 'running' | 'paused' | 'finished' | 'crashed';
 export type Speed = 1 | 2 | 4;
 export const SPEEDS: Speed[] = [1, 2, 4];
 
+export interface WaitStat {
+  intersectionId: string;
+  /** vehicle-seconds: every waiting vehicle counts its own seconds */
+  total: number;
+  /** per vehicle that passed the intersection */
+  average: number;
+  vehicles: number;
+}
+
 export interface RunResult {
   time: number;
   targetTime: number;
   achieved: boolean;
   previousBest: number | null;
   isNewBest: boolean;
+  /** standstill per intersection: total over all vehicles and average per passing vehicle, seconds, busiest first */
+  waits: WaitStat[];
 }
 
 /** Delay before the game-over dialog covers the crash animation. */
@@ -132,6 +143,36 @@ export class GameSession {
   restart(): void {
     this.rebuild();
     this.start();
+  }
+
+  /**
+   * Skips the animation: simulates the whole run from t = 0 with the current settings in one go and
+   * shows the outcome (finish time or crash). Deterministic, so the result equals a played run.
+   */
+  computeResult(): void {
+    if (!this.level || !this.network) return;
+    this.rebuild();
+    const sim = this.sim!;
+    this.runState = 'running';
+    sim.run();
+    this.syncMirrors();
+    this.alpha = 1;
+    if (sim.status === 'finished') this.finish();
+    else if (sim.status === 'crashed') this.crash();
+    else this.runState = 'paused';
+  }
+
+  /** standstill per intersection for the current simulation, busiest (by total) first */
+  waitStats(): WaitStat[] {
+    const sim = this.sim;
+    if (!sim) return [];
+    return sim.waitTicks
+      .map((ticks, i) => {
+        const vehicles = sim.passCounts[i];
+        const total = ticks / TICKS_PER_SECOND;
+        return { intersectionId: sim.network.intersections[i].id, total, average: vehicles > 0 ? total / vehicles : 0, vehicles };
+      })
+      .sort((a, b) => b.total - a.total);
   }
 
   start(): void {
@@ -273,7 +314,7 @@ export class GameSession {
     const previous = this.trackProgress ? this.progress.get(level.id) : undefined;
     const achieved = time <= level.targetTime;
     const isNewBest = !previous || time < previous.bestTime;
-    this.result = { time, targetTime: level.targetTime, achieved, previousBest: previous?.bestTime ?? null, isNewBest };
+    this.result = { time, targetTime: level.targetTime, achieved, previousBest: previous?.bestTime ?? null, isNewBest, waits: this.waitStats() };
     this.audio.playFinish(achieved);
     if (!this.trackProgress) return;
     if (isNewBest) {

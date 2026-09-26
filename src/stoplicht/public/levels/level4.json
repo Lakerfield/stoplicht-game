@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level4",
  "name": "Blokkade",
+ "nameEn": "Blockade",
  "grid": {
   "width": 13,
   "height": 9
@@ -139,24 +140,24 @@
    "vehicleType": "car"
   },
   {
-   "time": 2,
-   "spawnPoint": "3",
-   "vehicleType": "car"
-  },
-  {
    "time": 2.5,
    "spawnPoint": "2",
    "vehicleType": "car"
   },
   {
-   "time": 4,
+   "time": 2.6,
    "spawnPoint": "3",
-   "vehicleType": "van"
+   "vehicleType": "car"
   },
   {
    "time": 4,
    "spawnPoint": "4",
    "vehicleType": "car"
+  },
+  {
+   "time": 5.2,
+   "spawnPoint": "3",
+   "vehicleType": "van"
   },
   {
    "time": 5.5,
@@ -164,103 +165,78 @@
    "vehicleType": "car"
   },
   {
-   "time": 6,
+   "time": 7.8,
    "spawnPoint": "3",
    "vehicleType": "car"
   },
   {
-   "time": 7,
+   "time": 9,
    "spawnPoint": "1",
    "vehicleType": "car"
   },
   {
-   "time": 8,
+   "time": 10.4,
    "spawnPoint": "3",
    "vehicleType": "motorcycle"
   },
   {
-   "time": 8.5,
+   "time": 10.5,
    "spawnPoint": "2",
    "vehicleType": "car"
   },
   {
-   "time": 10,
+   "time": 13.0,
    "spawnPoint": "3",
-   "vehicleType": "car"
-  },
-  {
-   "time": 11,
-   "spawnPoint": "4",
-   "vehicleType": "motorcycle"
-  },
-  {
-   "time": 12,
-   "spawnPoint": "3",
-   "vehicleType": "truck"
-  },
-  {
-   "time": 12.5,
-   "spawnPoint": "5",
    "vehicleType": "car"
   },
   {
    "time": 13,
+   "spawnPoint": "4",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 14.5,
+   "spawnPoint": "5",
+   "vehicleType": "car"
+  },
+  {
+   "time": 15.6,
+   "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 17,
    "spawnPoint": "1",
    "vehicleType": "car"
   },
   {
-   "time": 14,
+   "time": 18.2,
    "spawnPoint": "3",
    "vehicleType": "car"
   },
   {
-   "time": 14.5,
+   "time": 18.5,
    "spawnPoint": "2",
    "vehicleType": "car"
   },
   {
-   "time": 16,
-   "spawnPoint": "3",
-   "vehicleType": "car"
-  },
-  {
-   "time": 18,
+   "time": 20.8,
    "spawnPoint": "3",
    "vehicleType": "van"
   },
   {
-   "time": 18,
-   "spawnPoint": "4",
-   "vehicleType": "car"
-  },
-  {
-   "time": 19,
-   "spawnPoint": "1",
-   "vehicleType": "car"
-  },
-  {
-   "time": 19.5,
-   "spawnPoint": "5",
-   "vehicleType": "car"
-  },
-  {
-   "time": 20,
-   "spawnPoint": "3",
-   "vehicleType": "car"
-  },
-  {
-   "time": 20.5,
-   "spawnPoint": "2",
-   "vehicleType": "car"
-  },
-  {
    "time": 22,
-   "spawnPoint": "3",
-   "vehicleType": "motorcycle"
+   "spawnPoint": "4",
+   "vehicleType": "car"
   },
   {
-   "time": 24,
+   "time": 23.4,
    "spawnPoint": "3",
+   "vehicleType": "car"
+  },
+  {
+   "time": 23.5,
+   "spawnPoint": "5",
    "vehicleType": "car"
   },
   {
@@ -269,14 +245,9 @@
    "vehicleType": "car"
   },
   {
-   "time": 25,
-   "spawnPoint": "4",
-   "vehicleType": "motorcycle"
-  },
-  {
-   "time": 26,
+   "time": 26.0,
    "spawnPoint": "3",
-   "vehicleType": "truck"
+   "vehicleType": "motorcycle"
   },
   {
    "time": 26.5,
@@ -284,83 +255,38 @@
    "vehicleType": "car"
   },
   {
-   "time": 26.5,
-   "spawnPoint": "5",
-   "vehicleType": "car"
-  },
-  {
-   "time": 28,
-   "spawnPoint": "3",
-   "vehicleType": "car"
-  },
-  {
-   "time": 30,
+   "time": 28.6,
    "spawnPoint": "3",
    "vehicleType": "car"
   },
   {
    "time": 31,
-   "spawnPoint": "1",
-   "vehicleType": "car"
-  },
-  {
-   "time": 32,
-   "spawnPoint": "3",
-   "vehicleType": "van"
-  },
-  {
-   "time": 32,
    "spawnPoint": "4",
+   "vehicleType": "motorcycle"
+  },
+  {
+   "time": 31.2,
+   "spawnPoint": "3",
    "vehicleType": "car"
   },
   {
    "time": 32.5,
-   "spawnPoint": "2",
-   "vehicleType": "car"
-  },
-  {
-   "time": 33.5,
    "spawnPoint": "5",
    "vehicleType": "car"
   },
   {
-   "time": 34,
-   "spawnPoint": "3",
-   "vehicleType": "car"
-  },
-  {
-   "time": 36,
-   "spawnPoint": "3",
-   "vehicleType": "motorcycle"
-  },
-  {
-   "time": 37,
+   "time": 33,
    "spawnPoint": "1",
    "vehicleType": "car"
   },
   {
-   "time": 38,
+   "time": 33.8,
    "spawnPoint": "3",
    "vehicleType": "car"
   },
   {
-   "time": 38.5,
+   "time": 34.5,
    "spawnPoint": "2",
-   "vehicleType": "car"
-  },
-  {
-   "time": 39,
-   "spawnPoint": "4",
-   "vehicleType": "motorcycle"
-  },
-  {
-   "time": 40,
-   "spawnPoint": "3",
-   "vehicleType": "truck"
-  },
-  {
-   "time": 40.5,
-   "spawnPoint": "5",
    "vehicleType": "car"
   }
  ],
@@ -425,7 +351,7 @@
    "step": 0.1
   }
  },
- "targetTime": 80.5,
+ "targetTime": 62,
  "collisionMode": "strict",
  "defaultLightSettings": {
   "A": {

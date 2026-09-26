@@ -53,6 +53,22 @@ describe('RoadNetwork', () => {
     expect(end.x).toBe(42);
   });
 
+  it('only signals approaches that traffic can enter from', () => {
+    const level = crossLevel([], {
+      roads: [
+        { id: 'h', from: [0, 4], to: [10, 4] },
+        { id: 'v', from: [5, 0], to: [5, 8], oneWay: true }, // southbound only
+      ],
+      spawnPoints: [
+        { id: 'N', at: [5, 0] },
+        { id: 'W', at: [0, 4] },
+        { id: 'E', at: [10, 4] },
+      ],
+    });
+    const oneWay = new RoadNetwork(level);
+    expect(oneWay.intersections[0].approachToGroup).toEqual({ N: 'A', S: undefined, E: 'B', W: 'B' });
+  });
+
   it('rejects driving against a one-way road', () => {
     const level = crossLevel([], {
       roads: [

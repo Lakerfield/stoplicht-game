@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level19",
  "name": "Nachtbus",
+ "nameEn": "Night bus",
  "grid": {
   "width": 17,
   "height": 13

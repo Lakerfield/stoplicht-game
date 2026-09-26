@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level6",
  "name": "Het raster",
+ "nameEn": "The grid",
  "grid": {
   "width": 17,
   "height": 13

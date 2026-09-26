@@ -18,7 +18,9 @@
     "mute": "Toggle sound",
     "backToEditor": "Back to editor",
     "restart": "Restart",
-    "level": "Level"
+    "level": "Level",
+    "compute": "Compute",
+    "computeHint": "Skip the animation: compute the outcome of these settings right away."
   },
   "panel": {
     "title": "Intersection {{id}}",
@@ -56,12 +58,20 @@
     "diff": "Difference to best",
     "again": "Again",
     "next": "Next level",
-    "menu": "Menu"
+    "menu": "Menu",
+    "waits": "Waiting time per intersection",
+    "perVehicle": "per vehicle",
+    "waitTotal": "{{total}} in total, {{vehicles}} vehicles passed"
   },
   "crash": {
     "title": "Crash!",
     "body": "At intersection {{id}} crossing traffic drove onto a blocked junction.",
-    "reset": "Reset and try again"
+    "reset": "Reset and try again",
+    "causeQueue": "The red vehicle was stuck in a queue towards intersection {{id}}.",
+    "causeQueueExit": "The red vehicle was stuck behind a queue.",
+    "causeLight": "The red vehicle was waiting for red at intersection {{id}} while still on the junction.",
+    "causeUnknown": "The red vehicle did not clear the junction.",
+    "marked": "The amber vehicle hit it on green; both are marked on the map."
   },
   "menu": {
     "tagline": "Tune the traffic lights and get every car out of town as fast as possible.",
@@ -80,7 +90,14 @@
       "30": "30",
       "60": "60",
       "max": "max"
-    }
+    },
+    "install": "Install as app",
+    "installed": "Installed",
+    "iosHint": "On iPhone/iPad: tap Share in Safari (the square with the arrow) and choose 'Add to Home Screen'. Stoplicht then opens full screen, also offline.",
+    "insecureHint": "Installing as an app needs a secure connection (https). Open stoplicht.com in Chrome or Edge and choose 'Install'.",
+    "manualHint": "This browser offers no install button. In Chrome or Edge: open the browser menu (⋮) and choose 'Install app' or 'Add to Home screen'.",
+    "music": "Music",
+    "sfx": "Sound effects"
   },
   "editor": {
     "title": "Level editor",
@@ -151,7 +168,7 @@
     "clearPoint": "Clear all of this point",
     "perPoint": "Per spawn point (click for the list)",
     "noSpawnsHere": "No spawns at this point yet. Add a series or click in the timeline.",
-    "timelineHint": "Click an empty spot in a row to add a car (shift = truck), drag a dot to shift its time, click a dot to edit. Click a label or a spawn point on the map for the full list.",
+    "timelineHint": "Click an empty spot in a row to add a car (shift = truck), drag a dot to shift its time, click a dot to edit, shift-click to select. Click a label or a spawn point on the map for the full list. Ctrl/⌘+Z undoes.",
     "exportFirst": "Export first (JSON)",
     "cancel": "Cancel",
     "newLevel": "New level",
@@ -165,6 +182,21 @@
     "amberA": "Amber ↕",
     "amberB": "Amber ↔",
     "symmetric": "Symmetric (coupling fixed)",
-    "amberRange": "Amber min / max / step"
+    "amberRange": "Amber min / max / step",
+    "undo": "Undo",
+    "redo": "Redo",
+    "selected": "{{count}} selected",
+    "deleteSelected": "Delete selected",
+    "deselect": "Deselect",
+    "selectAll": "Select all of this point",
+    "nameEn": "Name (English)"
+  },
+  "play": {
+    "noEditorLevel": "There is no level in the editor to test.",
+    "unknownLevel": "Level '{{id}}' does not exist."
+  },
+  "hints": {
+    "level1": "Tap the junction. Far more cars arrive from north and south than from east and west: give ↕ more green than ↔ and press Start, or ⚡ Compute for the outcome without waiting.",
+    "level2": "Two junctions and a stream of cars from west to east. At junction B, set the Offset so its green starts slightly later than at A: a green wave. Copy and paste (⧉) saves work."
   }
 }

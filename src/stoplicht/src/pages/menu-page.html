@@ -4,6 +4,7 @@
   <header class="menu-header">
     <h1 class="text-4xl font-bold tracking-tight">🚦 Stoplicht</h1>
     <p class="opacity-70 mt-1">${'menu.tagline' | t}</p>
+    <a class="site-link" href="https://stoplicht.com" rel="noopener">stoplicht.com</a>
   </header>
 
   <p if.bind="error" class="text-red-700">${error}</p>
@@ -13,7 +14,7 @@
       <button type="button" class="level-row" disabled.bind="!l.unlocked" click.trigger="play(l)">
         <span class="level-index">${$index + 1}</span>
         <span class="level-main">
-          <span class="level-name">${l.name}
+          <span class="level-name">${l.displayName}
             <span class="badge" if.bind="l.collisionMode === 'strict'">${'menu.strict' | t}</span>
           </span>
           <span class="level-meta">
@@ -28,9 +29,21 @@
   </ol>
 
   <footer class="menu-footer">
-    <button type="button" class="btn" click.trigger="toggleLocale()" aria-label="${'menu.language' | t}">${locale === 'nl' ? 'EN' : 'NL'}</button>
+    <div class="segmented" role="group" aria-label="${'menu.language' | t}">
+      <button type="button" class="btn seg-btn" active.class="locale === 'nl'" aria-pressed.bind="locale === 'nl'" click.trigger="setLocale('nl')">NL</button>
+      <button type="button" class="btn seg-btn" active.class="locale === 'en'" aria-pressed.bind="locale === 'en'" click.trigger="setLocale('en')">EN</button>
+    </div>
     <button type="button" class="btn" click.trigger="audio.toggleMuted()" aria-label="${'hud.mute' | t}">${audio.muted ? '🔇' : '🔊'}</button>
+    <label class="volume" title="${'menu.music' | t}">
+      <span>🎵</span>
+      <input type="range" min="0" max="1" step="0.05" value.to-view="audio.musicVolume" input.trigger="audio.setMusicVolume($event.target.valueAsNumber)" change.trigger="audio.previewMusic()" aria-label="${'menu.music' | t}">
+    </label>
+    <label class="volume" title="${'menu.sfx' | t}">
+      <span>💥</span>
+      <input type="range" min="0" max="1" step="0.05" value.to-view="audio.sfxVolume" input.trigger="audio.setSfxVolume($event.target.valueAsNumber)" change.trigger="audio.previewSfx()" aria-label="${'menu.sfx' | t}">
+    </label>
     <button type="button" class="btn text-sm" click.trigger="cycleFpsMode()" title="${'menu.fpsHint' | t}" aria-label="${'menu.fps' | t}">${'menu.fps' | t}: ${'menu.fpsMode.' + fpsMode | t}</button>
+    <button type="button" class="btn text-sm" if.bind="install.available" click.trigger="installApp()">⬇ ${'menu.install' | t}</button>
     <template if.bind="editorUnlocked">
       <button type="button" class="btn" click.trigger="openEditor()">🛠 ${'menu.editor' | t}</button>
       <span class="text-xs opacity-60">${'menu.devUnlocked' | t}</span>
@@ -39,6 +52,10 @@
     <span class="grow"></span>
     <button type="button" class="version" click.trigger="onVersionClick($event)" title="v${version}">v${version}</button>
   </footer>
+
+  <p class="ios-hint" if.bind="installHint === 'ios'">${'menu.iosHint' | t}</p>
+  <p class="ios-hint" if.bind="installHint === 'insecure'">${'menu.insecureHint' | t}</p>
+  <p class="ios-hint" if.bind="installHint === 'manual'">${'menu.manualHint' | t}</p>
 
   <div class="toast" if.bind="toast">${toast}</div>
 </div>

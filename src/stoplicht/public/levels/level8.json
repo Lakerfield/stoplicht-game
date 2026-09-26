@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level8",
  "name": "Oogsttijd",
+ "nameEn": "Harvest time",
  "grid": {
   "width": 15,
   "height": 11

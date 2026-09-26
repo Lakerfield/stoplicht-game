@@ -41,10 +41,20 @@ export interface SimEvent {
   vehicleId: number;
 }
 
+export type CollisionCause = 'queue' | 'light' | 'unknown';
+
 export interface CollisionInfo {
   tick: number;
   intersectionId: string;
   vehicleIds: number[];
+  /** the vehicle that stood (or crawled) inside the junction and got hit */
+  blockerId: number;
+  /** the vehicle that drove into the junction on green */
+  hitterId: number;
+  /** why the blocker was stuck: a queue ahead of it, or a red light at the next junction */
+  cause: CollisionCause;
+  /** the junction the blocker was heading for (queue/light cause), if any */
+  causeIntersectionId: string | null;
 }
 
 export interface SimCounts {
@@ -87,6 +97,10 @@ export class Simulation {
   readonly plans: SignalPlan[];
   readonly collisionMode: CollisionMode;
   readonly totalVehicles: number;
+  /** ticks vehicles spent standing still while heading for each intersection (by intersection index) */
+  readonly waitTicks: number[];
+  /** vehicles that entered each intersection so far (by intersection index) */
+  readonly passCounts: number[];
   tick = 0;
   status: SimStatus = 'active';
   collision: CollisionInfo | undefined;
@@ -121,6 +135,8 @@ export class Simulation {
         queue.spawns.push({ def, tick, path });
       });
     this.totalVehicles = level.spawns.length;
+    this.waitTicks = this.network.intersections.map(() => 0);
+    this.passCounts = this.network.intersections.map(() => 0);
     for (const q of this.queues) {
       const last = q.spawns[q.spawns.length - 1];
       if (last && (!this.finalSpawn || last.tick >= this.finalSpawn.tick)) this.finalSpawn = last;
@@ -183,6 +199,10 @@ export class Simulation {
     const moves = this.vehicles.map(v => this.computeMove(v));
     for (let i = 0; i < this.vehicles.length; i++) {
       const veh = this.vehicles[i];
+      if (moves[i].v === 0) {
+        const ahead = this.upcomingIntersection(veh);
+        if (ahead) this.waitTicks[ahead.intersectionIndex]++;
+      }
       if (veh.v === 0 && moves[i].v > 0) this.events.push({ type: 'start', vehicleId: veh.id });
       else if (veh.v > 0 && moves[i].v === 0) this.events.push({ type: 'stop', vehicleId: veh.id });
       veh.prevS = veh.s;
@@ -257,6 +277,26 @@ export class Simulation {
         queue.next++;
       }
     }
+  }
+
+  /** the first intersection whose stop line the vehicle has not passed yet */
+  private upcomingIntersection(veh: Vehicle): PathIntersection | null {
+    const list = veh.path.intersections;
+    for (let i = veh.passedIndex; i < list.length; i++) if (veh.s <= list[i].sStop) return list[i];
+    return null;
+  }
+
+  /** Why a vehicle is (nearly) standing still: stuck behind its leader, or waiting for a light. */
+  private stallCause(veh: Vehicle): { cause: CollisionCause; intersectionId: string | null } {
+    const ahead = this.upcomingIntersection(veh);
+    const aheadId = ahead ? this.network.intersections[ahead.intersectionIndex].id : null;
+    const leader = veh.leader && !veh.leader.exited ? veh.leader : null;
+    if (leader) {
+      const gap = leader.s - leader.type.length - veh.type.minGap - veh.s;
+      if (gap < 0.5) return { cause: 'queue', intersectionId: aheadId };
+    }
+    if (ahead && !this.isGreenFor(ahead) && ahead.sStop - veh.s < 1) return { cause: 'light', intersectionId: aheadId };
+    return { cause: leader ? 'queue' : 'unknown', intersectionId: aheadId };
   }
 
   private groupOf(pi: PathIntersection): string | undefined {
@@ -345,6 +385,7 @@ export class Simulation {
   private advanceIntersectionMarker(veh: Vehicle): void {
     const list = veh.path.intersections;
     while (veh.passedIndex < list.length && veh.s - veh.type.length >= list[veh.passedIndex].sExit) {
+      this.passCounts[list[veh.passedIndex].intersectionIndex]++;
       veh.passedIndex++;
     }
   }
@@ -388,11 +429,21 @@ export class Simulation {
         for (let j = i + 1; j < list.length; j++) {
           if (list[i].group === list[j].group) continue;
           if (!boxesOverlap(boxes[i], boxes[j])) continue;
+          // the slower one was blocking the junction; the faster one drove in on green
+          const a = list[i].veh;
+          const b = list[j].veh;
+          const blocker = a.v <= b.v ? a : b;
+          const hitter = blocker === a ? b : a;
+          const why = this.stallCause(blocker);
           this.status = 'crashed';
           this.collision = {
             tick: this.tick,
             intersectionId: this.network.intersections[index].id,
-            vehicleIds: [list[i].veh.id, list[j].veh.id].sort((a, b) => a - b),
+            vehicleIds: [a.id, b.id].sort((x, y) => x - y),
+            blockerId: blocker.id,
+            hitterId: hitter.id,
+            cause: why.cause,
+            causeIntersectionId: why.intersectionId,
           };
           return;
         }

@@ -117,6 +117,17 @@ export class EditorPage {
 
   generator = { spawnPoint: '', vehicleType: 'car', start: 0, interval: 4, count: 5 };
 
+  /** undo/redo: JSON snapshots of the level; every persisted change is one step */
+  private history: string[] = [];
+  private future: string[] = [];
+  private lastSnapshot = '';
+  canUndo = false;
+  canRedo = false;
+
+  /** spawns selected for bulk actions (raw objects from level.spawns) */
+  selectedSpawns = new Set<SpawnDef>();
+  selectionCount = 0;
+
   /** spawn point whose vehicle list is open in a popup */
   spawnPointDialog: string | null = null;
   /** single spawn being edited in a popup */
@@ -130,17 +141,107 @@ export class EditorPage {
     { id: 'inspect', label: 'editor.tool.inspect', icon: '👆' },
   ];
 
+  private readonly onKey = (e: KeyboardEvent): void => {
+    const target = e.target as HTMLElement | null;
+    if (target && /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName)) return;
+    const mod = e.metaKey || e.ctrlKey;
+    if (!mod) return;
+    if (e.key.toLowerCase() === 'z' && e.shiftKey) {
+      e.preventDefault();
+      this.redo();
+    } else if (e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      this.undo();
+    } else if (e.key.toLowerCase() === 'y') {
+      e.preventDefault();
+      this.redo();
+    }
+  };
+
   constructor() {
+    this.lastSnapshot = JSON.stringify(this.level);
     this.rebuild();
   }
 
   async attached(): Promise<void> {
+    window.addEventListener('keydown', this.onKey);
     this.applyViewBoxes();
     try {
       this.standardLevels = (await this.loader.getManifest()).levels;
     } catch {
       this.standardLevels = [];
     }
+  }
+
+  detaching(): void {
+    window.removeEventListener('keydown', this.onKey);
+  }
+
+  // ------------------------------------------------------------ undo / redo
+
+  undo(): void {
+    const prev = this.history.pop();
+    if (prev === undefined) return;
+    this.future.push(this.lastSnapshot);
+    this.restore(prev);
+  }
+
+  redo(): void {
+    const next = this.future.pop();
+    if (next === undefined) return;
+    this.history.push(this.lastSnapshot);
+    this.restore(next);
+  }
+
+  private restore(snapshot: string): void {
+    this.level = withDefaultTypes(JSON.parse(snapshot) as LevelData);
+    this.lastSnapshot = snapshot;
+    this.selectedSpawns.clear();
+    this.selectionCount = 0;
+    this.closeDialogs();
+    this.rebuild();
+  }
+
+  /** Records the state before the latest change; called from save(). */
+  private recordHistory(current: string): void {
+    if (current === this.lastSnapshot) return;
+    this.history.push(this.lastSnapshot);
+    if (this.history.length > 100) this.history.shift();
+    this.future = [];
+    this.lastSnapshot = current;
+    this.canUndo = this.history.length > 0;
+    this.canRedo = false;
+  }
+
+  // ------------------------------------------------------------ spawn selection
+
+  isSpawnSelected(spawn: SpawnDef): boolean {
+    return this.selectedSpawns.has(raw(spawn));
+  }
+
+  toggleSpawnSelected(spawn: SpawnDef, event?: Event): void {
+    event?.stopPropagation();
+    const target = raw(spawn);
+    if (this.selectedSpawns.has(target)) this.selectedSpawns.delete(target);
+    else this.selectedSpawns.add(target);
+    this.selectionCount = this.selectedSpawns.size;
+  }
+
+  selectAllOf(pointId: string): void {
+    for (const s of this.level.spawns) if (s.spawnPoint === pointId) this.selectedSpawns.add(s);
+    this.selectionCount = this.selectedSpawns.size;
+  }
+
+  clearSelection(): void {
+    this.selectedSpawns.clear();
+    this.selectionCount = 0;
+  }
+
+  deleteSelected(): void {
+    if (this.selectedSpawns.size === 0) return;
+    this.level.spawns = this.level.spawns.filter(s => !this.selectedSpawns.has(s));
+    this.clearSelection();
+    this.rebuild();
   }
 
   // ------------------------------------------------------------ derived views
@@ -623,6 +724,10 @@ export class EditorPage {
 
   onDotDown(spawn: SpawnDef, event: PointerEvent): void {
     event.stopPropagation();
+    if (event.shiftKey) {
+      this.toggleSpawnSelected(spawn);
+      return;
+    }
     this.timelineSvg?.setPointerCapture(event.pointerId);
     this.timelineDrag = { spawn: raw(spawn), startClientX: event.clientX, origTime: spawn.time, moved: false };
   }
@@ -727,6 +832,9 @@ export class EditorPage {
 
   private save(): void {
     this.store.save(this.level);
+    this.recordHistory(JSON.stringify(this.level));
+    this.canUndo = this.history.length > 0;
+    this.canRedo = this.future.length > 0;
     this.timelineSvg?.setAttribute('viewBox', `0 0 1000 ${this.timelineHeight}`);
   }
 }

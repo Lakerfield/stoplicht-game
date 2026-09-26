@@ -1,7 +1,7 @@
 {
   "name": "stoplicht",
-  "description": "An Aurelia 2 client application.",
-  "version": "0.1.0",
+  "description": "Stoplicht (stoplicht.com) \u2013 deterministic traffic-light puzzle built with Aurelia 2 and Phaser 3",
+  "version": "0.9.0",
   "repository": {
     "type": "git",
     "url": "???"
@@ -32,10 +32,11 @@
     "typescript-eslint": "^8.18.1",
     "vite": "^7.3.1",
     "vite-plugin-node-polyfills": "^0.25.0",
+    "vite-plugin-pwa": "^1.3.0",
     "vitest": "^2.1.8"
   },
   "scripts": {
-    "lint:js": "eslint \"src/**/*.{js,ts}\" \"test/**/*.{js,ts}\"",
+    "lint:js": "eslint \"src/**/*.{js,ts}\" \"test/**/*.{js,ts}\" \"e2e/**/*.ts\"",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint": "npm run lint:js && npm run lint:css",
     "pretest": "npm run lint",
@@ -44,5 +45,6 @@
     "test": "vitest",
     "test:e2e": "playwright test"
   },
-  "type": "module"
+  "type": "module",
+  "homepage": "https://stoplicht.com"
 }

@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level2",
  "name": "Groene golf",
+ "nameEn": "Green wave",
  "grid": {
   "width": 15,
   "height": 9

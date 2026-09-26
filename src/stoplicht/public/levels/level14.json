@@ -2,6 +2,7 @@
  "formatVersion": 1,
  "id": "level14",
  "name": "Trekkers en bussen",
+ "nameEn": "Tractors and buses",
  "grid": {
   "width": 19,
   "height": 11
