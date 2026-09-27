@@ -92,6 +92,11 @@ test.describe('playing a level', () => {
     await expect(dialog).toContainText('Botsing');
     await expect(dialog).toContainText(/rode auto/);
     await expect(dialog).toContainText('Wachttijd per kruispunt');
+    // put the dialog aside to look at the crash, then bring it back
+    await dialog.getByRole('button', { name: /Botsing bekijken/ }).click();
+    await expect(page.locator('.dialog')).toHaveCount(0);
+    await page.getByRole('button', { name: /Details tonen/ }).click();
+    await expect(page.locator('.dialog')).toContainText('Botsing');
   });
 
   test('shows a friendly error for an unknown level', async ({ page }) => {

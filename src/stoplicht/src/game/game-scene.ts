@@ -744,6 +744,8 @@ export class GameScene extends Phaser.Scene {
         this.crashShown = false;
         this.crashMarker.setVisible(false);
         this.tweens.killTweensOf(this.crashMarker);
+        // back to the overview after a reset
+        this.fitCamera(true);
       }
       return;
     }
@@ -765,8 +767,17 @@ export class GameScene extends Phaser.Scene {
       this.tweens.add({ targets: [ring, glow], scale: { from: 0.9, to: 1.15 }, duration: 600, yoyo: true, repeat: -1 });
     }
     this.tweens.add({ targets: this.crashMarker, alpha: { from: 0.7, to: 0.2 }, duration: 500, yoyo: true, repeat: -1 });
-    this.cameras.main.shake(350, 0.012);
-    this.cameras.main.pan(x, y, 500, 'Sine.easeInOut');
+    const cam = this.cameras.main;
+    cam.shake(350, 0.012);
+    // zoom in on the junction so the two vehicles and their markers are clearly visible
+    const targetZoom = Phaser.Math.Clamp(Math.max(cam.zoom, this.fitZoom * 2.2), this.fitZoom, MAX_ZOOM);
+    cam.pan(x, y, 500, 'Sine.easeInOut');
+    cam.zoomTo(targetZoom, 500, 'Sine.easeInOut', false, (_c: Phaser.Cameras.Scene2D.Camera, progress: number) => {
+      if (progress === 1) {
+        this.updateBounds();
+        cam.centerOn(x, y);
+      }
+    });
   }
 
   // ---------------------------------------------------------------- camera & input

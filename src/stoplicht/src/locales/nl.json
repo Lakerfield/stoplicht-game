@@ -20,7 +20,8 @@
     "restart": "Herstart",
     "level": "Level",
     "compute": "Bereken",
-    "computeHint": "Sla de animatie over: bereken de uitkomst van deze instellingen direct."
+    "computeHint": "Sla de animatie over: bereken de uitkomst van deze instellingen direct.",
+    "details": "Details tonen"
   },
   "panel": {
     "title": "Kruispunt {{id}}",
@@ -61,7 +62,8 @@
     "menu": "Menu",
     "waits": "Wachttijd per kruispunt",
     "perVehicle": "per auto",
-    "waitTotal": "{{total}} in totaal, {{vehicles}} auto's gepasseerd"
+    "waitTotal": "{{total}} in totaal, {{vehicles}} auto's gepasseerd",
+    "viewMap": "Kaart bekijken"
   },
   "crash": {
     "title": "Botsing!",
@@ -71,7 +73,8 @@
     "causeQueueExit": "De rode auto stond vast achter een file.",
     "causeLight": "De rode auto wachtte voor rood bij kruispunt {{id}} en stond nog op het kruisingsvlak.",
     "causeUnknown": "De rode auto kwam niet weg van het kruisingsvlak.",
-    "marked": "De oranje auto reed er bij groen tegenaan; beide zijn op de kaart gemarkeerd."
+    "marked": "De oranje auto reed er bij groen tegenaan; beide zijn op de kaart gemarkeerd.",
+    "viewMap": "Botsing bekijken"
   },
   "menu": {
     "tagline": "Stem de verkeerslichten af en laat alle auto's zo snel mogelijk de stad uit.",

@@ -165,6 +165,20 @@ game-canvas canvas {
 .hud-bottom {
   bottom: 0;
   z-index: 30;
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
+}
+
+.details-row {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.details-chip {
+  pointer-events: auto;
+  background: var(--card);
+  box-shadow: var(--shadow);
   justify-content: center;
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }

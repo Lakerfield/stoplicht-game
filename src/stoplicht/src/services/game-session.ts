@@ -81,6 +81,18 @@ export class GameSession {
   }
   /** the crash dialog appears a moment after the crash so the animation stays visible */
   crashDialogVisible = false;
+  /** the player put the result/crash dialog aside to inspect the map; the HUD offers to reopen it */
+  dialogHidden = false;
+
+  hideDialog(): void {
+    this.dialogHidden = true;
+    this.touch();
+  }
+
+  showDialog(): void {
+    this.dialogHidden = false;
+    this.touch();
+  }
   private crashDialogTimer: ReturnType<typeof setTimeout> | null = null;
   /** render interpolation fraction between the previous and the current tick */
   alpha = 0;
@@ -279,6 +291,7 @@ export class GameSession {
     this.collision = null;
     this.settingsDirty = false;
     this.crashDialogVisible = false;
+    this.dialogHidden = false;
     if (this.crashDialogTimer) {
       clearTimeout(this.crashDialogTimer);
       this.crashDialogTimer = null;

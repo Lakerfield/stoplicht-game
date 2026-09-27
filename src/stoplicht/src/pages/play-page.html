@@ -40,6 +40,9 @@
 
     <!-- controls bottom -->
     <div class="hud-bottom">
+      <div class="details-row" if.bind="session.dialogHidden && session.isOver">
+        <button type="button" class="btn details-chip" click.trigger="session.showDialog()">${session.runState === 'crashed' ? '💥' : '🏁'} ${'hud.details' | t}</button>
+      </div>
       <div class="hud-card hud-controls flex items-center gap-2 justify-center">
         <button type="button" class="btn" click.trigger="session.reset()" aria-label="${'hud.reset' | t}">↺<span class="hidden sm:inline"> ${'hud.reset' | t}</span></button>
         <button type="button" class="btn btn-primary min-w-28" click.trigger="session.togglePlay()" disabled.bind="session.isOver">
@@ -55,7 +58,7 @@
     <intersection-panel></intersection-panel>
 
     <!-- result -->
-    <div class="overlay" if.bind="session.runState === 'finished' && session.result">
+    <div class="overlay" if.bind="session.runState === 'finished' && session.result && !session.dialogHidden">
       <div class="dialog">
         <h2 class="text-2xl font-bold mb-1">${'result.title' | t}</h2>
         <p class="text-lg font-semibold mb-4" class.bind="session.result.achieved ? 'text-green-700' : 'text-red-700'">
@@ -77,13 +80,16 @@
         <div class="flex flex-col gap-2">
           <button type="button" class="btn btn-primary w-full" if.bind="session.result.achieved && nextLevelId" click.trigger="next()">${'result.next' | t} →</button>
           <button type="button" class="btn w-full" active.class="!(session.result.achieved && nextLevelId)" click.trigger="session.reset()">↺ ${'result.again' | t}</button>
-          <button type="button" class="btn w-full" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>
+          <div class="flex gap-2">
+            <button type="button" class="btn grow" click.trigger="session.hideDialog()">🗺 ${'result.viewMap' | t}</button>
+            <button type="button" class="btn grow" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- crash -->
-    <div class="overlay" if.bind="session.runState === 'crashed' && session.collision && session.crashDialogVisible">
+    <div class="overlay" if.bind="session.runState === 'crashed' && session.collision && session.crashDialogVisible && !session.dialogHidden">
       <div class="dialog border-red-300">
         <h2 class="text-2xl font-bold text-red-700 mb-2">💥 ${'crash.title' | t}</h2>
         <p class="mb-2">${'crash.body' | t: { id: crashIntersectionName }}</p>
@@ -93,8 +99,11 @@
           <div repeat.for="w of crashWaits" class="wait-row"><span>${'panel.title' | t: { id: w.name }}</span><span class="font-mono tabular-nums">${w.average.toFixed(1)} s <small>${'result.perVehicle' | t}</small></span><small class="wait-total">${'result.waitTotal' | t: { total: w.totalText, vehicles: w.vehicles }}</small></div>
         </div>
         <div class="flex flex-col gap-2">
-          <button type="button" class="btn btn-primary w-full" click.trigger="session.reset()">↺ ${'crash.reset' | t}</button>
-          <button type="button" class="btn w-full" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>
+          <button type="button" class="btn btn-primary w-full" click.trigger="session.hideDialog()">🗺 ${'crash.viewMap' | t}</button>
+          <div class="flex gap-2">
+            <button type="button" class="btn grow" click.trigger="session.reset()">↺ ${'hud.reset' | t}</button>
+            <button type="button" class="btn grow" click.trigger="back()">${(fromEditor ? 'hud.backToEditor' : 'result.menu') | t}</button>
+          </div>
         </div>
       </div>
     </div>

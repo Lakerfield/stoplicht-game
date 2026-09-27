@@ -20,7 +20,8 @@
     "restart": "Restart",
     "level": "Level",
     "compute": "Compute",
-    "computeHint": "Skip the animation: compute the outcome of these settings right away."
+    "computeHint": "Skip the animation: compute the outcome of these settings right away.",
+    "details": "Show details"
   },
   "panel": {
     "title": "Intersection {{id}}",
@@ -61,7 +62,8 @@
     "menu": "Menu",
     "waits": "Waiting time per intersection",
     "perVehicle": "per vehicle",
-    "waitTotal": "{{total}} in total, {{vehicles}} vehicles passed"
+    "waitTotal": "{{total}} in total, {{vehicles}} vehicles passed",
+    "viewMap": "View map"
   },
   "crash": {
     "title": "Crash!",
@@ -71,7 +73,8 @@
     "causeQueueExit": "The red vehicle was stuck behind a queue.",
     "causeLight": "The red vehicle was waiting for red at intersection {{id}} while still on the junction.",
     "causeUnknown": "The red vehicle did not clear the junction.",
-    "marked": "The amber vehicle hit it on green; both are marked on the map."
+    "marked": "The amber vehicle hit it on green; both are marked on the map.",
+    "viewMap": "View the crash"
   },
   "menu": {
     "tagline": "Tune the traffic lights and get every car out of town as fast as possible.",
